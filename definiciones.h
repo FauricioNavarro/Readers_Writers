@@ -14,6 +14,8 @@
 #ifndef MEMORIA_COMPARTIDA_H
 #define MEMORIA_COMPARTIDA_H
 
+#include <semaphore.h>
+
 typedef char * string;
 
 typedef struct{
@@ -22,12 +24,26 @@ typedef struct{
     int linea;
 }Linea;
 
+/*
 typedef struct{
-    Linea *lineas;
+    //Linea *lineas; // Si es para hacer una lista, creo que no funcionaría en shm :S
 }Lineas;
+*/
 
 typedef struct{
-    Lineas lineas;
+    sem_t sem_shm_writer;
+    sem_t sem_shm_reader;
+    sem_t sem_shm_r_e;
+    sem_t sem_shm_espia;
+    sem_t sem_fin_writer;
+    sem_t sem_fin_reader;
+    sem_t sem_fin_r_e;
+    sem_t sem_fin_espia;
+    char writer_wants_shm;
+    char reader_wants_shm;
+    char r_e_wants_shm;
+    char espia_wants_shm;
+    Linea lineas[]; // Se inicializa en el main.c de Inicializador
 }Mem_comp;
 
 #endif /* MEMORIA_COMPARTIDA_H */
