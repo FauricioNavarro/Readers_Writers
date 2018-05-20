@@ -5,14 +5,16 @@
  */
 
 /* 
- * File:   Linea.h
+ * File:   Memoria_compartida.h
  * Author: fauricio
  *
- * Created on 18 de mayo de 2018, 10:55 PM
+ * Created on 18 de mayo de 2018, 11:03 PM
  */
 
-#ifndef LINEA_H
-#define LINEA_H
+#ifndef MEMORIA_COMPARTIDA_H
+#define MEMORIA_COMPARTIDA_H
+
+typedef char * string;
 
 typedef struct{
     int ID;
@@ -24,5 +26,9 @@ typedef struct{
     Linea *lineas;
 }Lineas;
 
-#endif /* LINEA_H */
+typedef struct{
+    Lineas lineas;
+}Mem_comp;
+
+#endif /* MEMORIA_COMPARTIDA_H */
 

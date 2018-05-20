@@ -37,6 +37,11 @@
         <rebuildPropChanged>false</rebuildPropChanged>
       </toolsSet>
       <compileType>
+        <cTool>
+          <incDir>
+            <pElem>..</pElem>
+          </incDir>
+        </cTool>
       </compileType>
       <item path="Linea.h" ex="false" tool="3" flavor2="0">
       </item>

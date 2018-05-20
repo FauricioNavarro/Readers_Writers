@@ -16,7 +16,7 @@
 #include <sys/ipc.h>
 #include <sys/shm.h>
 #include <time.h>
-#include "Memoria_compartida.h"
+#include "definiciones.h"
 /*
  * INICIALIZADOR
  */
