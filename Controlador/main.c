@@ -1,7 +1,12 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+/* Tecnológico de Costa Rica
+ * Escuela de Computación
+ *
+ * Proyecto 2
+ *
+ * Estudiantes:
+ *  - Fauricio Navarro
+ *  - David Montero
+ *
  */
 
 /* 

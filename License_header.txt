@@ -1,0 +1,10 @@
+/* Tecnológico de Costa Rica
+ * Escuela de Computación
+ *
+ * Proyecto 2
+ *
+ * Estudiantes:
+ *  - Fauricio Navarro
+ *  - David Montero
+ *
+ */
