@@ -24,7 +24,7 @@ int main(int argc, char** argv) {
     
     Mem_comp *memoria_comp = (Mem_comp*)malloc(sizeof(Mem_comp));    
     FILE * fp;
-    int total_lineas = size(memoria_comp);
+    int total_lineas = size(memoria_comp->lineas);
         
     key_t key = ftok("shmfile",21);    
     int shmid = shmget(key,total_lineas,0666|IPC_CREAT);     
