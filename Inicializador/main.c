@@ -20,14 +20,17 @@
 /*
  * INICIALIZADOR
  */
-int main(int argc, char** argv) {
-    
+int main(int argc, char** argv) {           
+    int total_lineas = 125;    
     Mem_comp *memoria_comp = (Mem_comp*)malloc(sizeof(Mem_comp));    
+    memoria_comp->lineas[5];
+    size_t size = sizeof(Mem_comp);
+    printf("%zi\n",size);
     FILE * fp;
-    int total_lineas = size(memoria_comp->lineas);
-        
+       
+    //printf("Size: %d - %d",shm_size,1);
     key_t key = ftok("shmfile",21);    
-    int shmid = shmget(key,total_lineas,0666|IPC_CREAT);     
+    int shmid = shmget(key,size,0666|IPC_CREAT);     
     char *str = (char*) shmat(shmid,(void*)0,0);
     fp = fopen ("/home/fauricio/NetBeansProjects/Readers – Writers/bitacora.txt", "w+");    
     int i=0;

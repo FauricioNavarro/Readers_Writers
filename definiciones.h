@@ -24,12 +24,6 @@ typedef struct{
     int linea;
 }Linea;
 
-/*
-typedef struct{
-    //Linea *lineas; // Si es para hacer una lista, creo que no funcionaría en shm :S
-}Lineas;
-*/
-
 typedef struct{
     sem_t sem_shm_writer;
     sem_t sem_shm_reader;

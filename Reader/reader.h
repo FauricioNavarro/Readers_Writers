@@ -17,18 +17,24 @@
 #include <stdlib.h>
 #include <sys/ipc.h>
 #include <sys/shm.h>
+#include <sys/types.h>
+#include <sys/syscall.h>
 #include <pthread.h>
 #include <time.h>
+#include <string.h>
+#include "definiciones.h"
 
 typedef struct{
     int id;
     int shmid;    
     int tiempo_sleep;
     int tiempo_read;
+    Mem_comp *mem;
 } Reader;
 
 void *reader_function(void *vargp);
 void escribir_bitacora(char *msj);
+void escribir_proc(char *msj,int proceso);
 
 #endif /* READER_H */
 

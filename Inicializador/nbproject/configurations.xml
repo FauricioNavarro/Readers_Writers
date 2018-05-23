@@ -4,8 +4,6 @@
     <logicalFolder name="HeaderFiles"
                    displayName="Header Files"
                    projectFiles="true">
-      <itemPath>Linea.h</itemPath>
-      <itemPath>Memoria_compartida.h</itemPath>
     </logicalFolder>
     <logicalFolder name="ResourceFiles"
                    displayName="Resource Files"
@@ -43,10 +41,6 @@
           </incDir>
         </cTool>
       </compileType>
-      <item path="Linea.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="Memoria_compartida.h" ex="false" tool="3" flavor2="0">
-      </item>
       <item path="main.c" ex="false" tool="0" flavor2="0">
       </item>
     </conf>
@@ -70,10 +64,6 @@
           <developmentMode>5</developmentMode>
         </asmTool>
       </compileType>
-      <item path="Linea.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="Memoria_compartida.h" ex="false" tool="3" flavor2="0">
-      </item>
       <item path="main.c" ex="false" tool="0" flavor2="0">
       </item>
     </conf>
