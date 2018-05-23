@@ -25,18 +25,24 @@ typedef struct{
 }Linea;
 
 typedef struct{
+    // Semáforos para controlar acceso a memoria compartida
     sem_t sem_shm_writer;
     sem_t sem_shm_reader;
     sem_t sem_shm_r_e;
     sem_t sem_shm_espia;
+
+    // Semáforos para interactura con flag finalización
     sem_t sem_fin_writer;
     sem_t sem_fin_reader;
     sem_t sem_fin_r_e;
     sem_t sem_fin_espia;
+    
+    // Banderas para señalar intención de acceso a memoria compartida
     char writer_wants_shm;
     char reader_wants_shm;
     char r_e_wants_shm;
     char espia_wants_shm;
+    
     Linea lineas[]; // Se inicializa en el main.c de Inicializador
 }Mem_comp;
 
