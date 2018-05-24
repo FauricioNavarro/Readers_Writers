@@ -37,7 +37,8 @@ typedef struct{
     char reader_wants_shm;
     char r_e_wants_shm;
     char espia_wants_shm;
-    Linea lineas[]; // Se inicializa en el main.c de Inicializador
+    int num_lineas;
+    Linea lineas[];  // Se inicializa en el main.c de Inicializador    	
 }Mem_comp;
 
 #endif /* MEMORIA_COMPARTIDA_H */
