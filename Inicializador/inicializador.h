@@ -1,10 +1,9 @@
-Error reading included file file : ///home/fauricio/NetBeansProjects/Readers%20–%20Writers/License_header.txt
-        /* 
-         * File:   inicializador.h
-         * Author: fauricio
-         *
-         * Created on 23 de mayo de 2018, 06:14 PM
-         */
+/* 
+* File:   inicializador.h
+* Author: fauricio
+*
+* Created on 23 de mayo de 2018, 06:14 PM
+*/
 
 #ifndef INICIALIZADOR_H
 #define INICIALIZADOR_H

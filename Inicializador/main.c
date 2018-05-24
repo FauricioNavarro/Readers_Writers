@@ -16,6 +16,7 @@
  */
 
 #include "inicializador.h"
+
 Mem_comp *memoria_comp;
 char *setshm = "0000000000000000000000000"; 
 
@@ -59,6 +60,7 @@ void init_flags(){
 
 
 void clean_shm(){
+    int i=0;
     while(i<memoria_comp->num_lineas){
         strcpy(&memoria_comp->lineas[i].Mensaje,setshm);       
         printf("msj:%s\n",memoria_comp->lineas[i].Mensaje);
@@ -68,7 +70,6 @@ void clean_shm(){
 
 
 void create_bitacora(){
-    FILE bita;
-    bita = fopen ("/home/fauricio/NetBeansProjects/Readers – Writers/bitacora.txt", "w+");    
-    int i=0;
+    FILE *fb;
+    fb = fopen ("/home/fauricio/NetBeansProjects/Readers – Writers/bitacora.txt", "w+");        
 }
