@@ -12,96 +12,114 @@
  */
 
 #include "reader.h"
-
+pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
 char *linea = "\n---------------------------------------------------\n";
+char *setshm = "0000000000000000000000000";
+Mem_comp *mem;
+sem_t sem_controlador;
+int band[];
+int n_procesos;
 /*
  * READER
  */
 int main(int argc, char** argv) {
     //Parametros temporales
-    int n_procesos = 2;
+    n_procesos = 2;
     int t_sleep = 4;
     int t_read = 2;    
-    
-    int p_id,p_pid; 
-    p_id=getpid();  /*process id*/
-    p_pid=getpid(); /*parent process id*/
-    
-    escribir_proc("Process id",p_id);
-    escribir_proc("Parent process id",p_pid);
-    
-    key_t key = ftok("shmfile",21);        
-    int shmid = shmget(key,1,0666|IPC_CREAT);             
-    
+    int i = 0;       
+    int p_id = getpid(); 
     pthread_t readr_array[n_procesos];    
-    int i = 0;        
-    while(i<n_procesos){    
+    
+    band[n_procesos];
+    escribir_proc("pid",p_id);        
+    get_shm();                   
+        
+    sem_init(&sem_controlador,1,1);
+    sem_wait(&sem_controlador);
+    
+    while(i<n_procesos){            
         Reader *reader = malloc(sizeof(Reader));         
-        reader->id = i;
-        reader->shmid = shmid;
+        reader->id = i;        
         reader->tiempo_sleep = t_sleep;
-        reader->tiempo_read = t_read;        
-        int thread_id = pthread_create(&readr_array[i], NULL, reader_function, (void*) reader);                                
-        //escribir_proc("Thread id",thread_id);        
+        reader->tiempo_read = t_read;  
+        mem->reader_wants_shm = 1;
+        pthread_create(&readr_array[i], NULL, reader_function, (void*) reader);                                        
         i=i+1;
     }
-    pthread_join(readr_array[0], NULL); 
-                   
     
-             
+    while(1){
+        if(flags_on()){
+            mem->reader_wants_shm = 1;
+            sem_wait(&mem->sem_shm_reader);        
+            sem_wait(&mem->sem_fin_reader); 
+            sem_post(&sem_controlador);
+            sem_wait(&sem_controlador);
+            if(not_flags_on()){
+                sem_post(&mem->sem_shm_reader);        
+                sem_post(&mem->sem_fin_reader); 
+            }            
+        }else{
+            mem->reader_wants_shm = 0;
+        }        
+    }
+    pthread_join(readr_array[0], NULL);     
+    
     return (EXIT_SUCCESS);
 }
 
-void *reader_function(void *vargp)
-{     
+
+void *reader_function(void *vargp){
     Reader *reader = (Reader*) vargp;
-    pthread_t thId = pthread_self();
-    //int id = gettid();
+    pthread_t thId = pthread_self();    
     pid_t tid = (pid_t) syscall (SYS_gettid);
-    escribir_proc("Thread id:",tid);
-    time_t ltime;
-    struct tm *tm;         
-    char *shm = (char*) shmat(reader->shmid,(void*)0,0);       
-    int pages = strlen(shm)/25;
-    int len = strlen(shm);
-    int regBase = 0;
-    int cont = 0;
+    int lim= mem->num_lineas;    
     int i = 0;
-    while(1){
-        reader->mem = shmat(reader->shmid, NULL, 0);
-        sem_wait(&reader->mem->sem_shm_reader);
-        regBase = cont*25;                                                         
-        
-        if(shm[regBase]=='0'){
-            printf("Casilla vacia \n"); 
-            printf("%s",linea);
-        }else{            
-            sleep(reader->tiempo_read);            
-            char *timestamp = (char *)malloc(sizeof(char) * 16);  
-            ltime=time(NULL);    
-            tm=localtime(&ltime); 
-            sprintf(timestamp,"%s%d-%04d/%02d/%02d-%02d:%02d:%02d","r",reader->id, tm->tm_year+1900, tm->tm_mon, 
-                tm->tm_mday, tm->tm_hour, tm->tm_min, tm->tm_sec);                            
+    while(1){        
+        band[reader->id]=0;
+        pthread_mutex_lock(&mutex);
+        sem_wait(&sem_controlador);
+        band[reader->id]=1;
+        if(strcmp(&mem->lineas[i].Mensaje,setshm)==0){
+            printf("Casilla vacia \n");
+        }else{
+            char *time = timestamp(reader->id);
             escribir_bitacora(timestamp);
-            printf("\nSe lee en el registro Base %d:",regBase);                                       
-            int j;
-            for(j=0;j<25;j++){
-                printf("%c",shm[regBase+j]);
-            }            
-            printf("%s",linea);
-            sleep(reader->tiempo_sleep);
+            printf("Linea leida: %s",mem->lineas->Mensaje[i]);
+            sleep(reader->tiempo_read);
         }
-        
-        cont++;
-        i=i+1;
-        if(cont == pages){
-            cont = 0;
-        }
-        sleep(60);
-    }      
-            
+        band[reader->id]=-1;
+        sleep(reader->tiempo_sleep);        
+        if(i==lim){            
+            i=0;            
+        }else{                
+            i=i+1;
+        } 
+        sem_wait(&sem_controlador);
+        pthread_mutex_unlock(&mutex);
+        sleep(0.1);        
+    }
     return NULL;
 }
+
+
+char* timestamp(int id){
+    char *timestamp = (char *)malloc(sizeof(char) * 16);      
+    time_t ltime = time(NULL);    
+    struct tm *tm;      
+    tm=localtime(&ltime); 
+    sprintf(timestamp,"%s%d-%04d/%02d/%02d-%02d:%02d:%02d","r",id, tm->tm_year+1900, tm->tm_mon, 
+            tm->tm_mday, tm->tm_hour, tm->tm_min, tm->tm_sec);
+    return timestamp;     
+}
+
+
+void get_shm(){
+    key_t key = ftok("shmfile",21);        
+    int shmid = shmget(key,sizeof(Mem_comp),0666|IPC_CREAT);           
+    mem = (Mem_comp*) shmat(shmid, NULL, 0);
+}
+
 
 void escribir_bitacora(char *msj){
     FILE *bitacora;
@@ -110,9 +128,31 @@ void escribir_bitacora(char *msj){
     fclose(bitacora);
 }
 
+
 void escribir_proc(char *msj,int proceso){
     FILE *bitacora;    
     bitacora = fopen ("/home/fauricio/NetBeansProjects/Readers – Writers/Data/procesos.txt", "a+");  
     fprintf(bitacora,"%s:%d\n",msj,proceso);
     fclose(bitacora);
+}
+
+
+int flags_on(){
+    int i=0;
+    while(i<n_procesos){
+        if(band[i]==1){
+            return 1;
+        }            
+    }
+    return 0;
+}
+
+int not_flags_on(){
+    int i=0;
+    while(i<n_procesos){
+        if(band[i]==1){
+            return 0;
+        }            
+    }
+    return 1;
 }

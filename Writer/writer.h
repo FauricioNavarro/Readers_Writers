@@ -18,19 +18,26 @@
 #include <stdlib.h>
 #include <sys/ipc.h>
 #include <sys/shm.h>
-#include <string.h>
-#include <time.h>
+#include <sys/types.h>
+#include <sys/syscall.h>
 #include <pthread.h>
-#include <unistd.h>
+#include <time.h>
+#include <string.h>
+#include "definiciones.h"
 
 typedef struct{
-    int id;
-    int shmid;    
+    int id;     
     int tiempo_sleep;
     int tiempo_write;
 } Writer;
 
 void *writer_function(void *vargp);
 void escribir_bitacora(char *msj);
+void escribir_proc(char *msj,int proceso);
+void get_shm();
+char* timestamp(int id);
+int flags_on();
+int not_flags_on();
+
 #endif /* WRITER_H */
 

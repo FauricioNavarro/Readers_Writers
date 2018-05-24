@@ -3,11 +3,10 @@
     <type>org.netbeans.modules.cnd.makeproject</type>
     <configuration>
         <data xmlns="http://www.netbeans.org/ns/make-project/1">
-            <name>Inicializador</name>
+            <name>Finalizador</name>
             <c-extensions>c</c-extensions>
             <cpp-extensions/>
-            <header-extensions>h</header-extensions>
-            <sourceEncoding>UTF-8</sourceEncoding>
+            <header-extensions/>
             <make-dep-projects/>
             <sourceRootList/>
             <confList>
@@ -20,6 +19,7 @@
                     <type>1</type>
                 </confElem>
             </confList>
+            <sourceEncoding>UTF-8</sourceEncoding>
             <formatting>
                 <project-formatting-style>false</project-formatting-style>
             </formatting>
