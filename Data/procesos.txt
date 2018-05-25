@@ -42,3 +42,9 @@ Writer
 pid:8543
 Reader
 pid:8844
+Reader egoista
+pid:3335
+Reader
+pid:3369
+Reader
+pid:3491
