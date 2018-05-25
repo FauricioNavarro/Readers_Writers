@@ -22,3 +22,19 @@ Reader egoista
 pid:15438
 Writer
 pid:15560
+Reader
+pid:15762
+Reader egoista
+pid:15810
+Writer
+pid:15854
+Reader egoista
+pid:15998
+Reader
+pid:16032
+Writer
+pid:16067
+Reader
+pid:17496
+Reader
+pid:17851
