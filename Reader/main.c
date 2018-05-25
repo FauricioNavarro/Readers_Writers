@@ -12,77 +12,106 @@
  */
 
 #include "reader.h"
+pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
 char *linea = "\n---------------------------------------------------\n";
+char *setshm = "0000000000000000000000000";
+Mem_comp *mem;
+int band[];
+int n_procesos;
 /*
  * READER
  */
 int main(int argc, char** argv) {
-    int n_procesos = 1;
+    //Parametros temporales
+    n_procesos = 2;
     int t_sleep = 4;
     int t_read = 2;    
-    key_t key = ftok("shmfile",21);        
-    int shmid = shmget(key,1,0666|IPC_CREAT);  
-    pthread_t readr_array[4];    
-    int i = 0;        
-    while(i<n_procesos){    
-        Reader *reader = malloc(sizeof(Reader));        
-        reader->id = i;
-        reader->shmid = shmid;
+    int i = 0;       
+    int p_id = getpid(); 
+    pthread_t readr_array[n_procesos];    
+    
+    band[n_procesos];
+    escribir_proc("Reader\npid",p_id);        
+    get_shm();                           
+    
+    while(i<n_procesos){            
+        Reader *reader = malloc(sizeof(Reader));         
+        reader->id = i;        
         reader->tiempo_sleep = t_sleep;
-        reader->tiempo_read = t_read;        
-        pthread_create(&readr_array[i], NULL, reader_function, (void*) reader);                                
+        reader->tiempo_read = t_read;  
+        mem->reader_wants_shm = 1;
+        pthread_create(&readr_array[i], NULL, reader_function, (void*) reader);                                        
         i=i+1;
     }
-    pthread_join(readr_array[0], NULL); 
-                   
     
-             
+    while(1){
+        if(flags_on()){
+            mem->reader_wants_shm = 1;
+            sem_wait(&mem->sem_shm_reader);        
+            sem_wait(&mem->sem_fin_reader);             
+            sem_post(&mem->sem_shm_reader);        
+            sem_post(&mem->sem_fin_reader);                         
+        }else{
+            mem->reader_wants_shm = 0;
+        }        
+    }
+    pthread_join(readr_array[0], NULL);     
+    
     return (EXIT_SUCCESS);
 }
 
-void *reader_function(void *vargp)
-{     
+
+void *reader_function(void *vargp){
     Reader *reader = (Reader*) vargp;
-    time_t ltime;
-    struct tm *tm;         
-    char *shm = (char*) shmat(reader->shmid,(void*)0,0);       
-    int pages = strlen(shm)/25;
-    int len = strlen(shm);
-    int regBase = 0;
-    int cont = 0;
+    pthread_t thId = pthread_self();    
+    pid_t tid = (pid_t) syscall (SYS_gettid);
+    int lim= mem->num_lineas;    
     int i = 0;
-    while(i <= 6){
-        regBase = cont*25;                                                         
-        if(shm[regBase]=='0'){
-            printf("Casilla vacia \n"); 
-            printf("%s",linea);
+    while(1){        
+        band[reader->id]=0;
+        //pthread_mutex_lock(&mutex);
+        //sem_wait(&sem_controlador);
+        band[reader->id]=1;
+        if(strcmp(&mem->lineas[i].Mensaje,setshm)==0){
+            printf("Casilla vacia \n");
         }else{
-            sleep(reader->tiempo_read);
-            
-            char *timestamp = (char *)malloc(sizeof(char) * 16);  
-            ltime=time(NULL);    
-            tm=localtime(&ltime); 
-            sprintf(timestamp,"%s%d-%04d/%02d/%02d-%02d:%02d:%02d","r",reader->id, tm->tm_year+1900, tm->tm_mon, 
-                tm->tm_mday, tm->tm_hour, tm->tm_min, tm->tm_sec);                            
+            char *time = timestamp(reader->id);
             escribir_bitacora(timestamp);
-            printf("\nSe lee en el registro Base %d:",regBase);                                       
-            int j;
-            for(j=0;j<25;j++){
-                printf("%c",shm[regBase+j]);
-            }            
-            printf("%s",linea);
-            sleep(reader->tiempo_sleep);
+            printf("Linea leida: %s",mem->lineas->Mensaje[i]);
+            sleep(reader->tiempo_read);
         }
-        
-        cont++;
-        i=i+1;
-        if(cont == pages){
-            cont = 0;
-        }
-    }      
-            
+        band[reader->id]=-1;
+        sleep(reader->tiempo_sleep);        
+        if(i==lim){            
+            i=0;            
+        }else{                
+            i=i+1;
+        } 
+        //sem_wait(&sem_controlador);
+        //pthread_mutex_unlock(&mutex);
+        sleep(0.1);        
+    }
     return NULL;
 }
+
+
+char* timestamp(int id){
+    char *timestamp = (char *)malloc(sizeof(char) * 16);      
+    time_t ltime = time(NULL);    
+    struct tm *tm;      
+    tm=localtime(&ltime); 
+    sprintf(timestamp,"%s%d-%04d/%02d/%02d-%02d:%02d:%02d","r",id, tm->tm_year+1900, tm->tm_mon, 
+            tm->tm_mday, tm->tm_hour, tm->tm_min, tm->tm_sec);
+    return timestamp;     
+}
+
+
+void get_shm(){
+    key_t key = ftok("shmfile",21);        
+    int shmid = shmget(key,sizeof(Mem_comp),0666|IPC_CREAT);           
+    mem = (Mem_comp*) shmat(shmid, NULL, 0);
+}
+
 
 void escribir_bitacora(char *msj){
     FILE *bitacora;
@@ -92,5 +121,30 @@ void escribir_bitacora(char *msj){
 }
 
 
+void escribir_proc(char *msj,int proceso){
+    FILE *bitacora;    
+    bitacora = fopen ("/home/fauricio/NetBeansProjects/Readers – Writers/Data/procesos.txt", "a+");  
+    fprintf(bitacora,"%s:%d\n",msj,proceso);
+    fclose(bitacora);
+}
 
 
+int flags_on(){
+    int i=0;
+    while(i<n_procesos){
+        if(band[i]==1){
+            return 1;
+        }            
+    }
+    return 0;
+}
+
+int not_flags_on(){
+    int i=0;
+    while(i<n_procesos){
+        if(band[i]==1){
+            return 0;
+        }            
+    }
+    return 1;
+}

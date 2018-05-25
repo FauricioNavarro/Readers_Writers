@@ -1,5 +1,5 @@
-build/Debug/GNU-Linux/main.o: main.c Memoria_compartida.h Linea.h
+build/Debug/GNU-Linux/main.o: main.c inicializador.h ../definiciones.h
 
-Memoria_compartida.h:
+inicializador.h:
 
-Linea.h:
+../definiciones.h:

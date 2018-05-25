@@ -24,12 +24,6 @@ typedef struct{
     int linea;
 }Linea;
 
-/*
-typedef struct{
-    //Linea *lineas; // Si es para hacer una lista, creo que no funcionaría en shm :S
-}Lineas;
-*/
-
 typedef struct{
     // Semáforos para controlar acceso a memoria compartida
     sem_t sem_shm_writer;
@@ -48,8 +42,8 @@ typedef struct{
     char reader_wants_shm;
     char r_e_wants_shm;
     char espia_wants_shm;
-    
-    Linea lineas[]; // Se inicializa en el main.c de Inicializador
+    int num_lineas;
+    Linea lineas[];  // Se inicializa en el main.c de Inicializador    	
 }Mem_comp;
 
 #endif /* MEMORIA_COMPARTIDA_H */

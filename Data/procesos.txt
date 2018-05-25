@@ -1,0 +1,10 @@
+Reader egoista
+pid:8595
+Reader
+pid:8894
+Writer
+pid:9115
+Reader egoista
+pid:9616
+Reader egoista
+pid:9741

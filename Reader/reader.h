@@ -13,22 +13,31 @@
 
 #ifndef READER_H
 #define READER_H
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/ipc.h>
 #include <sys/shm.h>
+#include <sys/types.h>
+#include <sys/syscall.h>
 #include <pthread.h>
 #include <time.h>
+#include <string.h>
+#include "definiciones.h"
 
 typedef struct{
-    int id;
-    int shmid;    
+    int id;    
     int tiempo_sleep;
-    int tiempo_read;
+    int tiempo_read;    
 } Reader;
 
 void *reader_function(void *vargp);
 void escribir_bitacora(char *msj);
+void escribir_proc(char *msj,int proceso);
+void get_shm();
+char* timestamp(int id);
+int flags_on();
+int not_flags_on();
 
 #endif /* READER_H */
 
