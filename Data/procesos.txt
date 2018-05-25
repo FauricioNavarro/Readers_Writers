@@ -8,3 +8,17 @@ Reader egoista
 pid:9616
 Reader egoista
 pid:9741
+Reader
+pid:14231
+Reader
+pid:14643
+Reader egoista
+pid:14898
+Reader
+pid:15105
+Reader
+pid:15403
+Reader egoista
+pid:15438
+Writer
+pid:15560
