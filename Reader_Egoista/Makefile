@@ -48,7 +48,7 @@
 MKDIR=mkdir
 CP=cp
 CCADMIN=CCadmin
-
+LDFLAGS=-pthread
 
 # build
 build: .build-post
