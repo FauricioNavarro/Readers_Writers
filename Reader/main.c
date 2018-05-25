@@ -18,6 +18,10 @@ char *setshm = "0000000000000000000000000";
 Mem_comp *mem;
 int band[];
 int n_procesos;
+//char *ruta_proceso = "/home/fauricio/NetBeansProjects/Readers – Writers/Data/procesos.txt"; 
+//char *ruta_bitacora ="/home/fauricio/NetBeansProjects/Readers – Writers/bitacora.txt"; 
+char *ruta_proceso = "/home/stickman/Documents/TEC/SO/Proyecto_2/Readers_Writers/Data/procesos.txt";
+char *ruta_bitacora ="/home/stickman/Documents/TEC/SO/Proyecto_2/Readers_Writers/bitacora.txt";
 /*
  * READER
  */
@@ -107,15 +111,16 @@ char* timestamp(int id){
 
 
 void get_shm(){
-    key_t key = ftok("shmfile",21);        
-    int shmid = shmget(key,sizeof(Mem_comp),0666|IPC_CREAT);           
+    key_t key = ftok("shmfile",21);
+    printf("key %d", key);
+    int shmid = shmget(key,sizeof(Mem_comp),0666|IPC_CREAT);
     mem = (Mem_comp*) shmat(shmid, NULL, 0);
 }
 
 
 void escribir_bitacora(char *msj){
     FILE *bitacora;
-    bitacora = fopen ("/home/fauricio/NetBeansProjects/Readers – Writers/bitacora.txt", "a+");  
+    bitacora = fopen (ruta_bitacora, "a+");  
     fprintf(bitacora,"Reader-> %s\n",msj);
     fclose(bitacora);
 }
@@ -123,7 +128,7 @@ void escribir_bitacora(char *msj){
 
 void escribir_proc(char *msj,int proceso){
     FILE *bitacora;    
-    bitacora = fopen ("/home/fauricio/NetBeansProjects/Readers – Writers/Data/procesos.txt", "a+");  
+    bitacora = fopen (ruta_proceso, "a+");  
     fprintf(bitacora,"%s:%d\n",msj,proceso);
     fclose(bitacora);
 }
