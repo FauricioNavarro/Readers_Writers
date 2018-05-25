@@ -85,7 +85,7 @@ void espiar(string tipo) {
     strcat(ruta, "/task/"); // "/proc/#/task/
     
     
-    // Consulta por PID's del status de los hilos del proceso
+    /* Consulta por PID's del status de los hilos del proceso
     do {
         fgets(buff, MAX_LINEA_BIT, file);
         //printf("%s\n", buff);
@@ -94,6 +94,7 @@ void espiar(string tipo) {
             
         }
     } while ();
+     */
 }
 
 int is_num(char *buff) {
