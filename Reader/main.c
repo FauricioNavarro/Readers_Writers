@@ -18,8 +18,7 @@ char *setshm = "0000000000000000000000000";
 Mem_comp *mem;
 int band[];
 int n_procesos;
-char *ruta_proceso = "/home/fauricio/NetBeansProjects/Readers – Writers/Data/procesos.txt";
-char *ruta_bitacora ="/home/fauricio/NetBeansProjects/Readers – Writers/bitacora.txt";
+
 /*
  * READER
  */
@@ -109,25 +108,26 @@ char* timestamp(int id){
 
 
 void get_shm(){
-    key_t key = ftok("shmfile",21);        
-    int shmid = shmget(key,sizeof(Mem_comp),0666|IPC_CREAT);           
+    key_t key = ftok("shmfile",21);
+    printf("key %d", key);
+    int shmid = shmget(key,sizeof(Mem_comp),0666|IPC_CREAT);
     mem = (Mem_comp*) shmat(shmid, NULL, 0);
 }
 
 
 void escribir_bitacora(char *msj){
     FILE *bitacora;
-    bitacora = fopen (ruta_bitacora, "a+");  
+    bitacora = fopen (BITACORA, "a+");  
     fprintf(bitacora,"Reader-> %s\n",msj);
     fclose(bitacora);
 }
 
 
 void escribir_proc(char *msj,int proceso){
-    FILE *bitacora;    
-    bitacora = fopen (ruta_proceso, "a+");  
-    fprintf(bitacora,"%s:%d\n",msj,proceso);
-    fclose(bitacora);
+    FILE *procs;    
+    procs = fopen (PROCS, "a+");  
+    fprintf(procs,"%s:%d\n",msj,proceso);
+    fclose(procs);
 }
 
 
