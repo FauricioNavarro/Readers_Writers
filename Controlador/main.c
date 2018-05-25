@@ -54,7 +54,7 @@ int main(int argc, char** argv) {
         else
             tipo_selec = selec_segun_jerar(mem, &contador_r_e);
 
-        if (tipo_selec == -1)
+        if (tipo_selec != -1)
             spawn_fin_chck_thread(mem, tipo_selec);
     }
 

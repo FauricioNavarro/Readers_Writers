@@ -22,8 +22,6 @@ Mem_comp *mem;
 sem_t sem_controlador;
 int band[];
 int n_procesos;
-char *ruta_proceso = "/home/fauricio/NetBeansProjects/Readers – Writers/Data/procesos.txt";
-char *ruta_bitacora ="/home/fauricio/NetBeansProjects/Readers – Writers/bitacora.txt";
 
 /*
  * WRITER
@@ -89,7 +87,7 @@ void *writer_function(void *vargp)
             char *time = timestamp(writer->id);
             strcpy(mem->lineas->Mensaje[i],time);
             escribir_bitacora(timestamp);
-            printf("Linea leida: %s",mem->lineas->Mensaje[i]);
+            printf("Linea escrita: %s",mem->lineas->Mensaje[i]);
             sleep(writer);
         }
         band[writer->id]=-1;
@@ -126,17 +124,17 @@ void get_shm(){
 
 void escribir_bitacora(char *msj){
     FILE *bitacora;
-    bitacora = fopen (ruta_bitacora, "a+");  
+    bitacora = fopen (BITACORA, "a+");  
     fprintf(bitacora,"Reader-> %s\n",msj);
     fclose(bitacora);
 }
 
 
 void escribir_proc(char *msj,int proceso){
-    FILE *bitacora;    
-    bitacora = fopen (ruta_proceso, "a+");  
-    fprintf(bitacora,"%s:%d\n",msj,proceso);
-    fclose(bitacora);
+    FILE *procs;    
+    procs = fopen (PROCS, "a+");  
+    fprintf(procs,"%s:%d\n",msj,proceso);
+    fclose(procs);
 }
 
 
