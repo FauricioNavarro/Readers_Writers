@@ -19,8 +19,8 @@ pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
 char *linea = "\n---------------------------------------------------\n";
 char *setshm = "0000000000000000000000000";
 Mem_comp *mem;
-sem_t sem_controlador;
-int band[];
+sem_t pflag;
+int band[]; //Bandera para ver el estado de cada thread
 int n_procesos;
 
 /*
@@ -34,7 +34,7 @@ int main(int argc, char** argv) {
     int p_id = getpid(); 
     pthread_t writer_array[n_procesos];    
     
-    band[n_procesos];
+    //band[n_procesos];
     escribir_proc("Writer\npid",p_id);        
     get_shm();                   
     
@@ -52,8 +52,8 @@ int main(int argc, char** argv) {
             mem->writer_wants_shm = 1;
             sem_wait(&mem->sem_shm_writer);        
             sem_wait(&mem->sem_fin_writer); 
-            sem_post(&sem_controlador);
-            sem_wait(&sem_controlador);
+            sem_post(&pflag);
+            sem_wait(&pflag);
             if(not_flags_on()){
                 sem_post(&mem->sem_shm_writer);        
                 sem_post(&mem->sem_fin_writer); 
@@ -79,12 +79,15 @@ void *writer_function(void *vargp)
     while(1){        
         band[writer->id]=0;
         pthread_mutex_lock(&mutex);
-        sem_wait(&sem_controlador);
         band[writer->id]=1;
+        sem_wait(&pflag);
+        
         if(strcmp(&mem->lineas[i].Mensaje,setshm)==0){
             printf("Casilla vacia \n");
         }else{
             char *time = timestamp(writer->id);
+            mem->lineas->ID = writer->id;
+            mem->lineas->linea = i;
             strcpy(mem->lineas->Mensaje[i],time);
             escribir_bitacora(timestamp);
             printf("Linea escrita: %s",mem->lineas->Mensaje[i]);
@@ -97,7 +100,7 @@ void *writer_function(void *vargp)
         }else{                
             i=i+1;
         } 
-        sem_wait(&sem_controlador);
+        sem_wait(&pflag);
         pthread_mutex_unlock(&mutex);
         sleep(0.1);            
     }  
@@ -143,7 +146,8 @@ int flags_on(){
     while(i<n_procesos){
         if(band[i]==1){
             return 1;
-        }            
+        } 
+        i++;
     }
     return 0;
 }
@@ -155,6 +159,7 @@ int not_flags_on(){
         if(band[i]==1){
             return 0;
         }            
+        i++;
     }
     return 1;
 }

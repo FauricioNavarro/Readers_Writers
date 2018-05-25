@@ -89,6 +89,8 @@ void *reader_function(void *vargp){
         }else{
             char *time = timestamp(re->id);
             escribir_bitacora(timestamp);
+            mem->lineas->ID = re->id;
+            mem->lineas->linea = i;      
             strcpy(mem->lineas->Mensaje[i],setshm);
             printf("Linea leida: %s",mem->lineas->Mensaje[i]);
             sleep(re->tiempo_read);
@@ -142,7 +144,8 @@ int flags_on(){
     while(i<n_procesos){
         if(band[i]==1){
             return 1;
-        }            
+        }        
+        i++;
     }
     return 0;
 }
@@ -152,7 +155,8 @@ int not_flags_on(){
     while(i<n_procesos){
         if(band[i]==1){
             return 0;
-        }            
+        }     
+        i++;
     }
     return 1;
 }
