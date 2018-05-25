@@ -22,6 +22,8 @@
 #include <sys/shm.h>
 #include <semaphore.h>
 #include <time.h>
+#include <unistd.h>
+#include <errno.h>
 
 #include "definiciones.h"
 #include "controlador.h"
@@ -39,23 +41,43 @@
  *      que llegue alguien más.
  */
 int main(int argc, char** argv) {
-    key_t key = ftok("shmfile", 21);
+    key_t key = ftok(KEY_FILE, 21);
+    if (key == -1) {
+        printf("[Error con llave] %s\n", strerror(errno));
+        exit(EXIT_FAILURE);
+    }
     int shmid = shmget(key, 1, 0666 | IPC_CREAT);
+    if (shmid == -1) {
+        printf("[Error con llave] %s\n", strerror(errno));
+        exit(EXIT_FAILURE);
+    }
     Mem_comp *mem = shmat(shmid, NULL, 0);
+    if ((int) mem == -1) {
+        printf("[Error al hacer attach] %s\n", strerror(errno));
+        exit(EXIT_FAILURE);
+    }
+    
+    printf("key %x\n", key);
+    printf("shmid %d\n", shmid);
 
     pedir_sem_procs(mem);
-
+    
     srand(time(NULL));
     char contador_r_e = 0;
     tipo_proc tipo_selec;
     while (1) {
+        printf("Entered busy waiting\n");
+        print_want_flags(mem);
+        
         if (mem->r_e_wants_shm && contador_r_e == 2)
             tipo_selec = selec_segun_3_r_e(mem, &contador_r_e);
         else
             tipo_selec = selec_segun_jerar(mem, &contador_r_e);
-
-        if (tipo_selec != -1)
+        
+        if (tipo_selec != -1) {
+            printf("[Proc of type %d entered]\n", tipo_selec);
             spawn_fin_chck_thread(mem, tipo_selec);
+        }
     }
 
     return (EXIT_SUCCESS);
@@ -70,6 +92,22 @@ void pedir_sem_procs(Mem_comp *mem) {
     sem_wait(&mem->sem_shm_reader);
     sem_wait(&mem->sem_shm_r_e);
     sem_wait(&mem->sem_shm_espia);
+}
+
+void print_want_flags(Mem_comp *mem) {
+    if (mem->writer_wants_shm || mem->reader_wants_shm || mem->r_e_wants_shm ||
+            mem->espia_wants_shm) {
+        printf("===========\n");
+        printf(" Flags:\n");
+        printf("===========\n");
+        printf(" Writer %d\n", mem->writer_wants_shm);
+        printf(" Reader %d\n", mem->reader_wants_shm);
+        printf(" RE     %d\n", mem->r_e_wants_shm);
+        printf(" Espia  %d\n", mem->espia_wants_shm);
+    } else {
+        printf("Flags apagadas\n");
+        sleep(1);
+    }
 }
 
 /*

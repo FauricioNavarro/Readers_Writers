@@ -17,6 +17,8 @@
 #include <sys/ipc.h>
 #include <sys/shm.h>
 
+#include "definiciones.h"
+
 /*
  * Finalizador
  */
@@ -25,7 +27,8 @@ int main(int argc, char** argv) {
     int * mem;
     int err,err1;
     
-    key_t key = ftok("shmfile",21);    
+    key_t key = ftok(KEY_FILE,21);    
+    printf("key: %x \n", key);
     shm_id = shmget(key, NULL , IPC_CREAT | 0666);    
     mem = ( int *) shmat ( shm_id , ( void *) 0 , 0) ;
     
