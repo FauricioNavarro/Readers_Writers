@@ -18,7 +18,7 @@
 #include <sys/shm.h>
 
 /*
- * Finalizador temporal
+ * Finalizador
  */
 int main(int argc, char** argv) {
     int shm_id; 
@@ -26,7 +26,7 @@ int main(int argc, char** argv) {
     int err,err1;
     
     key_t key = ftok("shmfile",21);    
-    shm_id = shmget(key, 1 , IPC_CREAT | 0666);    
+    shm_id = shmget(key, NULL , IPC_CREAT | 0666);    
     mem = ( int *) shmat ( shm_id , ( void *) 0 , 0) ;
     
     
@@ -39,6 +39,10 @@ int main(int argc, char** argv) {
     err1 = shmctl ( shm_id , IPC_RMID , NULL) ;               
 
     //shmdt(shm_id);
+    system("killall -g reader");
+    system("killall -g reader_egoista");
+    system("killall -g writer");
+    system("killall -g controlador");
 
     return 0;
 }
