@@ -16,6 +16,11 @@
 
 #include <semaphore.h>
 
+// #define PROCS "/home/fauricio/NetBeansProjects/Readers – Writers/Data/procesos.txt"
+#define PROCS "/home/stickman/Documents/TEC/SO/Proyecto_2/Readers_Writers/Data/procesos.txt"
+//#define BITACORA "/home/fauricio/NetBeansProjects/Readers – Writers/bitacora.txt"
+#define BITACORA "/home/stickman/Documents/TEC/SO/Proyecto_2/Readers_Writers/bitacora.txt"
+
 typedef char * string;
 
 typedef struct{

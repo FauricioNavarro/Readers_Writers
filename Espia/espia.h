@@ -17,6 +17,7 @@
 void mostrar_shm(Mem_comp *mem);
 int espionaje_solic(string tipo);
 void espiar(string tipo);
+int is_num(char *buff);
 
 #endif /* ESPIA_H */
 

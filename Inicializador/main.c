@@ -15,13 +15,16 @@
  * INICIALIZADOR
  */
 
+#include <errno.h>
+#include <string.h>
+
 #include "inicializador.h"
 
 Mem_comp *memoria_comp;
-char *setshm = "0000000000000000000000000"; 
+char *setshm = "0000000000000000000000000";
 
 int main(int argc, char** argv) {           
-    get_shm();     
+    get_shm();
     init_sem();
     init_flags();
     clean_shm();
@@ -30,8 +33,10 @@ int main(int argc, char** argv) {
 }
 
 void get_shm(){
-    key_t key = ftok("shmfile",21);    
-    int shmid = shmget(key,sizeof(Mem_comp),0666|IPC_CREAT);  
+    key_t key = ftok("shmfile",21);
+    printf("%d\n", key);
+    printf("%s\n", strerror(errno));
+    int shmid = shmget(key,sizeof(Mem_comp),0666|IPC_CREAT);
     memoria_comp = (Mem_comp*) shmat(shmid,(void*)0,0);
     memoria_comp->num_lineas = 20;
     memoria_comp->lineas[memoria_comp->num_lineas]; 
@@ -71,5 +76,5 @@ void clean_shm(){
 
 void create_bitacora(){
     FILE *fb;
-    fb = fopen ("/home/fauricio/NetBeansProjects/Readers – Writers/bitacora.txt", "w+");        
+    fb = fopen (BITACORA, "w+");        
 }
