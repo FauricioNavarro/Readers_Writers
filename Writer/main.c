@@ -35,7 +35,7 @@ int main(int argc, char** argv) {
     pthread_t writer_array[n_procesos];    
     
     band[n_procesos];
-    escribir_proc("pid",p_id);        
+    escribir_proc("Writer\npid",p_id);        
     get_shm();                   
     
     while(i<n_procesos){    
@@ -85,6 +85,7 @@ void *writer_function(void *vargp)
             printf("Casilla vacia \n");
         }else{
             char *time = timestamp(writer->id);
+            strcpy(mem->lineas->Mensaje[i],time);
             escribir_bitacora(timestamp);
             printf("Linea leida: %s",mem->lineas->Mensaje[i]);
             sleep(writer);

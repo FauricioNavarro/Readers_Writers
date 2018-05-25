@@ -4,6 +4,7 @@
     <logicalFolder name="HeaderFiles"
                    displayName="Header Files"
                    projectFiles="true">
+      <itemPath>reader_egoista.h</itemPath>
     </logicalFolder>
     <logicalFolder name="ResourceFiles"
                    displayName="Resource Files"
@@ -35,8 +36,20 @@
         <rebuildPropChanged>false</rebuildPropChanged>
       </toolsSet>
       <compileType>
+        <cTool>
+          <incDir>
+            <pElem>..</pElem>
+          </incDir>
+        </cTool>
+        <linkerTool>
+          <linkerAddLib>
+            <pElem>..</pElem>
+          </linkerAddLib>
+        </linkerTool>
       </compileType>
       <item path="main.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="reader_egoista.h" ex="false" tool="3" flavor2="0">
       </item>
     </conf>
     <conf name="Release" type="1">
@@ -60,6 +73,8 @@
         </asmTool>
       </compileType>
       <item path="main.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="reader_egoista.h" ex="false" tool="3" flavor2="0">
       </item>
     </conf>
   </confs>

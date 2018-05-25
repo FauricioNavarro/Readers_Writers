@@ -16,7 +16,6 @@ pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
 char *linea = "\n---------------------------------------------------\n";
 char *setshm = "0000000000000000000000000";
 Mem_comp *mem;
-sem_t sem_controlador;
 int band[];
 int n_procesos;
 /*
@@ -32,11 +31,8 @@ int main(int argc, char** argv) {
     pthread_t readr_array[n_procesos];    
     
     band[n_procesos];
-    escribir_proc("pid",p_id);        
-    get_shm();                   
-        
-    sem_init(&sem_controlador,1,1);
-    sem_wait(&sem_controlador);
+    escribir_proc("Reader\npid",p_id);        
+    get_shm();                           
     
     while(i<n_procesos){            
         Reader *reader = malloc(sizeof(Reader));         
@@ -52,13 +48,9 @@ int main(int argc, char** argv) {
         if(flags_on()){
             mem->reader_wants_shm = 1;
             sem_wait(&mem->sem_shm_reader);        
-            sem_wait(&mem->sem_fin_reader); 
-            sem_post(&sem_controlador);
-            sem_wait(&sem_controlador);
-            if(not_flags_on()){
-                sem_post(&mem->sem_shm_reader);        
-                sem_post(&mem->sem_fin_reader); 
-            }            
+            sem_wait(&mem->sem_fin_reader);             
+            sem_post(&mem->sem_shm_reader);        
+            sem_post(&mem->sem_fin_reader);                         
         }else{
             mem->reader_wants_shm = 0;
         }        
@@ -77,8 +69,8 @@ void *reader_function(void *vargp){
     int i = 0;
     while(1){        
         band[reader->id]=0;
-        pthread_mutex_lock(&mutex);
-        sem_wait(&sem_controlador);
+        //pthread_mutex_lock(&mutex);
+        //sem_wait(&sem_controlador);
         band[reader->id]=1;
         if(strcmp(&mem->lineas[i].Mensaje,setshm)==0){
             printf("Casilla vacia \n");
@@ -95,8 +87,8 @@ void *reader_function(void *vargp){
         }else{                
             i=i+1;
         } 
-        sem_wait(&sem_controlador);
-        pthread_mutex_unlock(&mutex);
+        //sem_wait(&sem_controlador);
+        //pthread_mutex_unlock(&mutex);
         sleep(0.1);        
     }
     return NULL;
