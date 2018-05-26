@@ -110,7 +110,7 @@ char* timestamp(int id){
 
 
 void get_shm(){
-    key_t key = ftok("shmfile",21);
+    key_t key = ftok(KEY_FILE, 21);
     printf("key %d", key);
     int shmid = shmget(key,sizeof(Mem_comp),0666|IPC_CREAT);
     mem = (Mem_comp*) shmat(shmid, NULL, 0);

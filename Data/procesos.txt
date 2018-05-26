@@ -42,9 +42,32 @@ Writer
 pid:8543
 Reader
 pid:8844
+<<<<<<< HEAD
+Writer
+pid:5740
+Reader
+pid:5823
+Reader egoista
+pid:5886
+Writer
+pid:6502
+Writer
+pid:3453
+Writer
+pid:4722
+Reader
+pid:4758
+Reader egoista
+pid:4796
+Writer
+pid:8452
+=======
 Reader egoista
 pid:3335
 Reader
 pid:3369
 Reader
 pid:3491
+>>>>>>> Fauricio
+Writer
+pid:9437

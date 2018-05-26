@@ -33,10 +33,11 @@ int main(int argc, char** argv) {
 }
 
 void get_shm(){
-    key_t key = ftok("shmfile",21);
-    printf("%d\n", key);
+    key_t key = ftok(KEY_FILE,21);
+    printf("key %x\n", key);
     printf("%s\n", strerror(errno));
     int shmid = shmget(key,sizeof(Mem_comp),0666|IPC_CREAT);
+    printf("shmid %d\n", shmid);
     memoria_comp = (Mem_comp*) shmat(shmid,(void*)0,0);
     memoria_comp->num_lineas = 20;
     memoria_comp->lineas[memoria_comp->num_lineas]; 
