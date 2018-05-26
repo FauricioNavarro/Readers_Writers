@@ -54,7 +54,7 @@ int main(int argc, char** argv) {
             mem->writer_wants_shm = 1;
             sem_wait(&mem->sem_shm_writer);        
             sem_wait(&mem->sem_fin_writer); 
-            
+            mem->writer_wants_shm = 0;
             sem_post(&pflag);
             sleep(0.1);
             sem_wait(&pflag);
@@ -93,12 +93,12 @@ void *writer_function(void *vargp)
             mem->lineas->ID = writer->id;
             mem->lineas->linea = i;            
             strcpy(mem->lineas[i].Mensaje,time);            
-            escribir_bitacora(time);
-            printf("Escribi en bit\n");
-            printf("Linea escrita: %s",mem->lineas[i].Mensaje);
+            escribir_bitacora(time);            
+            //char *msj = mem->lineas[i].Mensaje;
+            //printf("Linea escrita: %s",msj);
             sleep(writer->tiempo_write);
-            band[writer->id]=-1;
-            sleep(writer->tiempo_sleep);  
+            band[writer->id]=-1;              
+            printf("Fin de ciclo\n");
         }
               
         if(i==lim){            
@@ -109,6 +109,7 @@ void *writer_function(void *vargp)
         sem_post(&pflag);
         sleep(0.1);      
         pthread_mutex_unlock(&mutex);              
+        sleep(writer->tiempo_sleep);
     }  
     return NULL;
 }
@@ -133,7 +134,7 @@ void get_shm(){
 
 void escribir_bitacora(char *msj){    
     FILE *bitacora;    
-    bitacora = fopen (BITACORA, "a+");          
+    bitacora = fopen (BITACORA, "a+");
     fprintf(bitacora,"Writer->%s\n",msj);    
     fclose(bitacora);    
 }

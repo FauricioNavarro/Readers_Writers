@@ -23,6 +23,7 @@
 #include <pthread.h>
 #include <time.h>
 #include <string.h>
+#include <errno.h>
 #include "definiciones.h"
 
 typedef struct{
