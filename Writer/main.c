@@ -11,8 +11,6 @@
  * Created on 10 de mayo de 2018, 05:23 PM
  */
 
-#include <iso646.h>
-
 #include "writer.h"
 
 pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
@@ -26,6 +24,12 @@ int n_procesos;
  * WRITER
  */
 int main(int argc, char** argv) {
+    /*
+    n_procesos = atoi(argv[1]);
+    int t_read = atoi(argv[2]);  
+    int t_sleep = atoi(argv[3]);    
+    printf("param 1:%d,2:%d,3:%d\n",n_procesos,t_read,t_read);
+    */
     n_procesos = 1;
     int t_sleep = 4;
     int t_write = 2;    
@@ -33,7 +37,7 @@ int main(int argc, char** argv) {
     int p_id = getpid(); 
     pthread_t writer_array[n_procesos];    
     
-    //band[n_procesos];
+    band[n_procesos];
     escribir_proc("Writer\npid",p_id);        
     get_shm();                   
     

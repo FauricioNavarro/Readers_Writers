@@ -15,9 +15,8 @@
 
 pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
 char *linea = "\n---------------------------------------------------\n";
-char *setshm = "0000000000000000000000000";
 Mem_comp *mem;
-sem_t sem_controlador;
+sem_t pflag;
 int band[];
 int n_procesos;
 /*
@@ -25,6 +24,12 @@ int n_procesos;
  */
 int main(int argc, char** argv) {
     //Parametros temporales
+    /*
+    n_procesos = atoi(argv[1]);
+    int t_read = atoi(argv[2]);  
+    int t_sleep = atoi(argv[3]);    
+    printf("param 1:%d,2:%d,3:%d\n",n_procesos,t_read,t_read);
+    */
     n_procesos = 2;
     int t_sleep = 4;
     int t_read = 2;    
@@ -36,8 +41,8 @@ int main(int argc, char** argv) {
     escribir_proc("Reader egoista\npid",p_id);        
     get_shm();                   
         
-    sem_init(&sem_controlador,1,1);
-    sem_wait(&sem_controlador);
+    sem_init(&pflag,1,1);
+    sem_wait(&pflag);
     
     while(i<n_procesos){            
         Reader_eg *re = malloc(sizeof(Reader_eg));         
@@ -54,8 +59,8 @@ int main(int argc, char** argv) {
             mem->r_e_wants_shm = 1;
             sem_wait(&mem->sem_shm_r_e);        
             sem_wait(&mem->sem_fin_r_e);
-            sem_post(&sem_controlador);
-            sem_wait(&sem_controlador);
+            sem_post(&pflag);
+            sem_wait(&pflag);
             if(not_flags_on()){
                 sem_post(&mem->sem_shm_r_e);        
                 sem_post(&mem->sem_fin_r_e); 
@@ -64,7 +69,27 @@ int main(int argc, char** argv) {
             mem->r_e_wants_shm = 0;
         }        
     }
-    pthread_join(readr_array[0], NULL);     
+    
+    while(1){
+        if(flags_on()){
+            mem->r_e_wants_shm = 1;            
+            sem_wait(&mem->sem_shm_r_e);        
+            sem_wait(&mem->sem_fin_r_e);                  
+            mem->r_e_wants_shm = 0;
+            
+            sem_post(&pflag);            
+            sleep(1);            
+            sem_wait(&pflag);            
+            
+            sem_post(&mem->sem_shm_r_e);        
+            sem_post(&mem->sem_fin_r_e);             
+
+            sleep(1);
+        }else{
+            mem->r_e_wants_shm = 0;
+        }        
+    }
+    pthread_join(writer_array[0], NULL); 
     
     return (EXIT_SUCCESS);
 }
@@ -79,27 +104,26 @@ void *reader_function(void *vargp){
     while(1){ 
         time_t t;
         srand((unsigned) time(&t));
-        i = rand() % (max+1)-1; 
+        i = (rand() % (max+1)-1)-1;
+        
         band[re->id]=0;
         pthread_mutex_lock(&mutex);
-        sem_wait(&sem_controlador);
         band[re->id]=1;
-        if(strcmp(&mem->lineas[i].Mensaje,setshm)==0){
-            printf("Casilla vacia \n");
-        }else{
-            char *time = timestamp(re->id);
-            escribir_bitacora(timestamp);
+        sem_wait(&pflag);
+        
+        if(strcmp(&mem->lineas[i].Mensaje,LINEA_VACIA)!=0){            
+            char *time = timestamp(re->id);            
             mem->lineas->ID = re->id;
             mem->lineas->linea = i;      
-            strcpy(mem->lineas->Mensaje[i],setshm);
-            printf("Linea leida: %s",mem->lineas->Mensaje[i]);
+            strcpy(mem->lineas[i].Mensaje,LINEA_VACIA);
+            escribir_bitacora(time);
+            //printf("Linea leida: %s",mem->lineas->Mensaje[i]);
             sleep(re->tiempo_read);
-        }
-        band[re->id]=-1;
-        sleep(re->tiempo_sleep);              
-        sem_wait(&sem_controlador);
+        }        
+        sem_post(&pflag);
+        sleep(1);
         pthread_mutex_unlock(&mutex);
-        sleep(0.1);        
+        sleep(re->tiempo_sleep);
     }
     return NULL;
 }
@@ -110,7 +134,7 @@ char* timestamp(int id){
     time_t ltime = time(NULL);    
     struct tm *tm;      
     tm=localtime(&ltime); 
-    sprintf(timestamp,"%s%d-%04d/%02d/%02d-%02d:%02d:%02d","r",id, tm->tm_year+1900, tm->tm_mon, 
+    sprintf(timestamp,"%s%d-%04d/%02d/%02d-%02d:%02d:%02d","re",id, tm->tm_year+1900, tm->tm_mon, 
             tm->tm_mday, tm->tm_hour, tm->tm_min, tm->tm_sec);
     return timestamp;     
 }
