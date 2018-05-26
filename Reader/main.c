@@ -38,7 +38,7 @@ int main(int argc, char** argv) {
     pthread_t readr_array[n_procesos];    
     
     band[n_procesos];
-    escribir_proc("Reader\npid",p_id);        
+    escribir_proc("Reader\n",p_id);        
     get_shm();                           
     
     while(i<n_procesos){            
@@ -77,6 +77,7 @@ void *reader_function(void *vargp){
     Reader *reader = (Reader*) vargp;
     pthread_t thId = pthread_self();    
     pid_t tid = (pid_t) syscall (SYS_gettid);
+    escribir_thread(tid);
     int lim= mem->num_lineas;    
     int i = 0;
     while(1){        
@@ -84,8 +85,8 @@ void *reader_function(void *vargp){
         band[reader->id]=1;
         if(strcmp(&mem->lineas[i].Mensaje,LINEA_VACIA)!=0){
             char *time = timestamp(reader->id);            
-            mem->lineas->ID = reader->id;
-            mem->lineas->linea = i;            
+            mem->lineas[i].ID = reader->id;
+            mem->lineas[i].linea = i;            
             escribir_bitacora(time);
             sleep(reader->tiempo_read);
             band[reader->id]=-1;
@@ -132,12 +133,22 @@ void escribir_bitacora(char *msj){
 
 
 void escribir_proc(char *msj,int proceso){
+    sem_wait(&mem->sem_proceso);
     FILE *procs;    
     procs = fopen (PROCS, "a+");  
     fprintf(procs,"%s:%d\n",msj,proceso);
     fclose(procs);
+    sem_post(&mem->sem_proceso);
 }
 
+void escribir_thread(int proceso){
+    sem_wait(&mem->sem_proceso);
+    FILE *procs;    
+    procs = fopen (PROCS, "a+");  
+    fprintf(procs,"%d\n",proceso);
+    fclose(procs);
+    sem_post(&mem->sem_proceso);
+}
 
 int flags_on(){
     int i=0;

@@ -24,6 +24,7 @@
 #include <time.h>
 #include <string.h>
 #include <errno.h>
+#include <unistd.h>
 #include "definiciones.h"
 
 typedef struct{
@@ -35,6 +36,7 @@ typedef struct{
 void *writer_function(void *vargp);
 void escribir_bitacora(char *msj);
 void escribir_proc(char *msj,int proceso);
+void escribir_thread(int proceso);
 void crea_threads();
 void get_shm();
 char* timestamp(int id);

@@ -12,7 +12,6 @@
  */
 
 //#include <iso646.h>
-#include <unistd.h>
 
 #include "writer.h"
 
@@ -23,8 +22,8 @@ sem_t pflag;
 int band[]; //Bandera para ver el estado de cada thread
 int n_procesos;
 
-struct timespec time_audit_value;
-struct timespec *time_audit = &time_audit_value;
+//struct timespec time_audit_value;
+//struct timespec *time_audit = &time_audit_value;
 
 /*
  * WRITER
@@ -38,7 +37,7 @@ int main(int argc, char** argv) {
     pthread_t writer_array[n_procesos];    
     
     band[n_procesos];
-    escribir_proc("Writer\npid",p_id);        
+    escribir_proc("Writer\n",p_id);        
     get_shm();                   
     
     sem_init(&pflag,1,1);
@@ -110,6 +109,7 @@ void *writer_function(void *vargp)
     Writer *writer = (Writer*) vargp;
     pthread_t thId = pthread_self();    
     pid_t tid = (pid_t) syscall (SYS_gettid);
+    escribir_thread(tid);
     int lim= mem->num_lineas-1;    
     int i = 0;
     //printf("2\n");
@@ -133,8 +133,8 @@ void *writer_function(void *vargp)
         //printf("7(thread)\n");
         if(strcmp(&mem->lineas[i].Mensaje,LINEA_VACIA)==0){            
             char *time = timestamp(writer->id);
-            mem->lineas->ID = writer->id;
-            mem->lineas->linea = i;            
+            mem->lineas[i].ID = writer->id;
+            mem->lineas[i].linea = i;            
             strcpy(mem->lineas[i].Mensaje,time);            
             escribir_bitacora(time);            
             //char *msj = mem->lineas[i].Mensaje;
@@ -194,10 +194,21 @@ void escribir_bitacora(char *msj){
 
 
 void escribir_proc(char *msj,int proceso){
+    sem_wait(&mem->sem_proceso);
     FILE *procs;    
     procs = fopen (PROCS, "a+");  
     fprintf(procs,"%s:%d\n",msj,proceso);
     fclose(procs);
+    sem_post(&mem->sem_proceso);
+}
+
+void escribir_thread(int proceso){
+    sem_wait(&mem->sem_proceso);
+    FILE *procs;    
+    procs = fopen (PROCS, "a+");  
+    fprintf(procs,"%d\n",proceso);
+    fclose(procs);
+    sem_post(&mem->sem_proceso);
 }
 
 
