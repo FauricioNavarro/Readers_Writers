@@ -66,7 +66,6 @@ int main(int argc, char** argv) {
     char contador_r_e = 0;
     tipo_proc tipo_selec;
     while (1) {
-        printf("Entered busy waiting\n");
         print_want_flags(mem);
         
         if (mem->r_e_wants_shm && contador_r_e == 2)
