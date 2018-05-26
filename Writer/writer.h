@@ -34,6 +34,7 @@ typedef struct{
 void *writer_function(void *vargp);
 void escribir_bitacora(char *msj);
 void escribir_proc(char *msj,int proceso);
+void crea_threads();
 void get_shm();
 char* timestamp(int id);
 int flags_on();
