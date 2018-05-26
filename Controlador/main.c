@@ -74,7 +74,7 @@ int main(int argc, char** argv) {
             tipo_selec = selec_segun_jerar(mem, &contador_r_e);
         
         if (tipo_selec != -1) {
-            printf("[Proc of type %d entered]\n", tipo_selec);
+            printf("\n[Proc of type %d entered]\n", tipo_selec);
             spawn_fin_chck_thread(mem, tipo_selec);
         }
     }
