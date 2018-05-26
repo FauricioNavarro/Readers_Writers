@@ -63,7 +63,7 @@ int main(int argc, char** argv) {
             
             sem_wait(&mem->sem_shm_writer);
             sem_wait(&mem->sem_fin_writer);
-            printf("Probe\n");
+            //printf("Probe\n");
             mem->writer_wants_shm = 0;
             
             sem_post(&pflag);
@@ -85,12 +85,12 @@ int main(int argc, char** argv) {
             //if(not_flags_on()){
             //clock_gettime(CLOCK_REALTIME, time_audit);
             //printf("Timestamp: %lu : %lu\n", time_audit->tv_sec, time_audit->tv_nsec);
-            printf("A punto de soltar sems (5.3)\n");
+            //printf("A punto de soltar sems (5.3)\n");
             sem_post(&mem->sem_shm_writer);        
             sem_post(&mem->sem_fin_writer);
             //clock_gettime(CLOCK_REALTIME, time_audit);
             //printf("Timestamp: %lu : %lu\n", time_audit->tv_sec, time_audit->tv_nsec);
-            printf("Sems sueltos\n");
+            //printf("Sems sueltos\n");
             //}            
             sleep(1);
         }else{
@@ -184,10 +184,12 @@ void get_shm(){
 
 
 void escribir_bitacora(char *msj){    
+    sem_wait(&mem->sem_bitacora);
     FILE *bitacora;    
     bitacora = fopen (BITACORA, "a+");
     fprintf(bitacora,"Writer->%s\n",msj);    
     fclose(bitacora);    
+    sem_post(&mem->sem_bitacora);
 }
 
 

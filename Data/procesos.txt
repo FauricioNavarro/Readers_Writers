@@ -62,3 +62,13 @@ Writer
 pid:20009
 Reader egoista
 pid:20439
+Writer
+pid:21200
+Reader egoista
+pid:21329
+Writer
+pid:22632
+Writer
+pid:22968
+Reader egoista
+pid:23041
