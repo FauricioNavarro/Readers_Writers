@@ -26,10 +26,10 @@ typedef enum {
     espia   // 3
 } tipo_proc;
 
-struct tmp_data {
+typedef struct {
     tipo_proc tipo;
     Mem_comp *mem;
-};
+} thread_info;
 
 void pedir_sem_procs(Mem_comp *mem);
 tipo_proc selec_segun_jerar(Mem_comp *mem, char *contador_r_e);

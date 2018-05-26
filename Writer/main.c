@@ -11,6 +11,9 @@
  * Created on 10 de mayo de 2018, 05:23 PM
  */
 
+//#include <iso646.h>
+#include <unistd.h>
+
 #include "writer.h"
 
 pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
@@ -24,12 +27,6 @@ int n_procesos;
  * WRITER
  */
 int main(int argc, char** argv) {
-    /*
-    n_procesos = atoi(argv[1]);
-    int t_read = atoi(argv[2]);  
-    int t_sleep = atoi(argv[3]);    
-    printf("param 1:%d,2:%d,3:%d\n",n_procesos,t_read,t_read);
-    */
     n_procesos = 1;
     int t_sleep = 4;
     int t_write = 2;    
@@ -60,17 +57,18 @@ int main(int argc, char** argv) {
             sem_wait(&mem->sem_shm_writer);        
             sem_wait(&mem->sem_fin_writer);             
             mem->writer_wants_shm = 0;
+            
             sem_post(&pflag);
             printf("6\n");
-            //sleep(0.1);
-            printf("7(proc)\n");
+            sleep(1);
+            printf("7 (proc)\n");
             sem_wait(&pflag);            
-            printf("8(proc)\n");
+            printf("8 (proc)\n");
             //if(not_flags_on()){
             sem_post(&mem->sem_shm_writer);        
             sem_post(&mem->sem_fin_writer);             
             //}            
-            sleep(0.1);
+            sleep(1);
         }else{
             mem->writer_wants_shm = 0;
         }        
@@ -118,7 +116,7 @@ void *writer_function(void *vargp)
         }         
         sem_post(&pflag);
         printf("8(thread)\n");
-        sleep(0.1);      
+        sleep(1);      
         pthread_mutex_unlock(&mutex);        
         printf("9\n");
         sleep(writer->tiempo_sleep);

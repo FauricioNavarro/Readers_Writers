@@ -66,6 +66,7 @@ int main(int argc, char** argv) {
     char contador_r_e = 0;
     tipo_proc tipo_selec;
     while (1) {
+        //printf("Probe {\n");
         print_want_flags(mem);
         
         if (mem->r_e_wants_shm && contador_r_e == 2)
@@ -74,9 +75,12 @@ int main(int argc, char** argv) {
             tipo_selec = selec_segun_jerar(mem, &contador_r_e);
         
         if (tipo_selec != -1) {
-            printf("\n[Proc of type %d entered]\n", tipo_selec);
+            printf("\n[Proc of type %d entered]\n\n", tipo_selec);
             spawn_fin_chck_thread(mem, tipo_selec);
         }
+        
+        sleep(1);
+        //printf("} End cycle probe\n");
     }
 
     return (EXIT_SUCCESS);
@@ -105,7 +109,6 @@ void print_want_flags(Mem_comp *mem) {
         printf(" Espia  %d\n", mem->espia_wants_shm);
     } else {
         printf("Flags apagadas\n");
-        sleep(1);
     }
 }
 
@@ -124,7 +127,7 @@ tipo_proc selec_segun_3_r_e(Mem_comp* mem, char *contador_r_e) {
         if (mem->reader_wants_shm || mem->espia_wants_shm) {
             if (mem->reader_wants_shm && mem->espia_wants_shm) {
                 random = rand();
-                random > 0 ? (random = 1) : (random = 0);
+                random = random > 0 ? 1 : 0;
                 if (random) {
                     sem_post(&(mem->sem_shm_reader));
                     tipo = reader;
@@ -165,7 +168,7 @@ tipo_proc selec_segun_jerar(Mem_comp *mem, char *contador_r_e) {
     if (mem->writer_wants_shm || mem->r_e_wants_shm) {
         if (mem->writer_wants_shm && mem->r_e_wants_shm) { // Ambos pidieron
             random = rand();
-            random > 0 ? (random = 1) : (random = 0);
+            random = random > 0 ? 1 : 0;
             if (random) {
                 sem_post(&(mem->sem_shm_writer));
                 *contador_r_e = 0;
@@ -190,7 +193,7 @@ tipo_proc selec_segun_jerar(Mem_comp *mem, char *contador_r_e) {
         if (mem->reader_wants_shm || mem->espia_wants_shm) {
             if (mem->reader_wants_shm && mem->espia_wants_shm) {
                 random = rand();
-                random > 0 ? (random = 1) : (random = 0);
+                random = random > 0 ? 1 : 0;
                 if (random) {
                     sem_post(&(mem->sem_shm_reader));
                     tipo = reader;
@@ -222,8 +225,10 @@ tipo_proc selec_segun_jerar(Mem_comp *mem, char *contador_r_e) {
  */
 void spawn_fin_chck_thread(Mem_comp *mem, tipo_proc tipo_selec) {
     pthread_t fin_chck_thread;
-    struct tmp_data data = {tipo_selec, mem};
-    pthread_create(&fin_chck_thread, NULL, relock_sem_shm, (void *) &data);
+    thread_info *data = malloc(sizeof(thread_info));
+    data->mem = mem;
+    data->tipo = tipo_selec;
+    pthread_create(&fin_chck_thread, NULL, relock_sem_shm, (void *) data);
 }
 
 /*
@@ -232,26 +237,30 @@ void spawn_fin_chck_thread(Mem_comp *mem, tipo_proc tipo_selec) {
  * a la región crítica.
  */
 void *relock_sem_shm(void *tmp) {
-    struct tmp_data data = *((struct tmp_data *) tmp);
-    switch (data.tipo) {
+    thread_info *data = (thread_info *) tmp;
+    printf("Probe 0\n");
+    switch (data->tipo) {
         case writer:
-            sem_wait(&(data.mem->sem_fin_writer));
-            sem_wait(&(data.mem->sem_shm_writer));
+            printf("Probe 1\n");
+            sem_wait(&(data->mem->sem_fin_writer));
+            printf("Probe 2\n");
+            sem_wait(&(data->mem->sem_shm_writer));
+            printf("Probe 3\n");
             break;
 
         case reader:
-            sem_wait(&(data.mem->sem_fin_reader));
-            sem_wait(&(data.mem->sem_shm_reader));
+            sem_wait(&(data->mem->sem_fin_reader));
+            sem_wait(&(data->mem->sem_shm_reader));
             break;
 
         case r_e:
-            sem_wait(&(data.mem->sem_fin_r_e));
-            sem_wait(&(data.mem->sem_shm_r_e));
+            sem_wait(&(data->mem->sem_fin_r_e));
+            sem_wait(&(data->mem->sem_shm_r_e));
             break;
 
         case espia:
-            sem_wait(&(data.mem->sem_fin_espia));
-            sem_wait(&(data.mem->sem_shm_espia));
+            sem_wait(&(data->mem->sem_fin_espia));
+            sem_wait(&(data->mem->sem_shm_espia));
             break;
     }
 }
