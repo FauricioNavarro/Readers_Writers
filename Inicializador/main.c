@@ -23,8 +23,8 @@
 Mem_comp *memoria_comp;
 
 int main(int argc, char** argv) {  
-    //int num_lineas = atoi(argv[1]);
-    int num_lineas= 30;
+    int num_lineas = atoi(argv[1]);
+    //int num_lineas= 30;
     get_shm(num_lineas);
     init_sem();
     init_flags();

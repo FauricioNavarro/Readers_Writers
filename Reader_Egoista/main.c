@@ -24,15 +24,16 @@ int n_procesos;
  */
 int main(int argc, char** argv) {
     //Parametros temporales
-    /*
+    
     n_procesos = atoi(argv[1]);
     int t_read = atoi(argv[2]);  
     int t_sleep = atoi(argv[3]);    
     printf("param 1:%d,2:%d,3:%d\n",n_procesos,t_read,t_read);
-    */
+    /*
     n_procesos = 2;
     int t_sleep = 4;
     int t_read = 2;    
+    */
     int i = 0;       
     int p_id = getpid(); 
     pthread_t readr_array[n_procesos];    

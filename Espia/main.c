@@ -75,7 +75,7 @@ void espiar(string tipo) {
     FILE *file = fopen(PROCS, "r");
     char buff[MAX_LINEA_BIT];
     string pids[100]; // TO DO: Hacer dinámico
-    limpiar_str(pids);
+    limpiar_str_arr(pids);
 
     strcat(tipo, "\n"); // Para que el strcmp no falle
     // Encuentra la sección en el archivo correspondiente a la info. del proceso
@@ -125,7 +125,7 @@ int is_num(char *buff) {
     return 1;
 }
 
-void limpiar_str(string *pids) {
+void limpiar_str_arr(string *pids) {
     for (int i = 0; i < 100; i++) { // TO DO: Ajustar con def pids
         strcpy(pids[i], "");
     }
@@ -169,4 +169,8 @@ int str_in_str(char estado, string buff) {
             return 1;
     
     return 0;
+}
+
+void limpiar_str(string str) {
+    strcpy(str, "");
 }
