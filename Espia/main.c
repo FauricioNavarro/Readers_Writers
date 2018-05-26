@@ -25,6 +25,7 @@
 #define MAX_LINEA_BIT 45
 
 char ruta[MAX_LINEA_BIT] = "/proc/";
+char res[1000];
 
 /*
  * 
@@ -74,7 +75,7 @@ void espiar(string tipo) {
     FILE *file = fopen(PROCS, "r");
     char buff[MAX_LINEA_BIT];
     string pids[100]; // TO DO: Hacer dinámico
-    limpiar_pids(pids);
+    limpiar_str(pids);
 
     strcat(tipo, "\n"); // Para que el strcmp no falle
     // Encuentra la sección en el archivo correspondiente a la info. del proceso
@@ -124,16 +125,16 @@ int is_num(char *buff) {
     return 1;
 }
 
-void limpiar_pids(string *pids) {
+void limpiar_str(string *pids) {
     for (int i = 0; i < 100; i++) { // TO DO: Ajustar con def pids
         strcpy(pids[i], "");
     }
 }
 
 string get_pids_estado(string *pids, char estado) {
-    char *res[1000];
+    limpiar_str(res);
     strcpy(res, "");
-    char *ruta2[MAX_LINEA_BIT];
+    char ruta2[MAX_LINEA_BIT];
     FILE *file;
     char buff[MAX_LINEA_BIT];
     

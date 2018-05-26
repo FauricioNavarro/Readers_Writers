@@ -18,7 +18,7 @@ void mostrar_shm(Mem_comp *mem);
 int espionaje_solic(string tipo);
 void espiar(string tipo);
 int is_num(char *buff);
-void limpiar_pids(string *);
+void limpiar_str(string *);
 string get_pids_estado(string *pids, char estado);
 int str_in_str(char estado, string buff);
 

@@ -29,7 +29,7 @@ int n_procesos;
  * WRITER
  */
 int main(int argc, char** argv) {
-    n_procesos = 1;
+    n_procesos = 3;
     int t_sleep = 4;
     int t_write = 2;    
     int i = 0;       
