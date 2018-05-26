@@ -142,21 +142,21 @@ void escribir_bitacora(char *msj){
 
 
 void escribir_proc(char *msj,int proceso){
-    sem_wait(&mem->sem_proceso);
+    //sem_wait(&mem->sem_proceso);
     FILE *procs;    
     procs = fopen (PROCS, "a+");  
-    fprintf(procs,"%s:%d\n",msj,proceso);
+    fprintf(procs,"%s%d\n",msj,proceso);
     fclose(procs);
-    sem_post(&mem->sem_proceso);
+    //sem_post(&mem->sem_proceso);
 }
 
 void escribir_thread(int proceso){
-    sem_wait(&mem->sem_proceso);
+    //sem_wait(&mem->sem_proceso);
     FILE *procs;    
     procs = fopen (PROCS, "a+");  
     fprintf(procs,"%d\n",proceso);
     fclose(procs);
-    sem_post(&mem->sem_proceso);
+    //sem_post(&mem->sem_proceso);
 }
 
 

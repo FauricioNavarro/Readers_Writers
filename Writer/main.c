@@ -36,13 +36,13 @@ int main(int argc, char** argv) {
     int p_id = getpid(); 
     pthread_t writer_array[n_procesos];    
     
-    band[n_procesos];
-    escribir_proc("Writer\n",p_id);        
+    band[n_procesos];    
+    escribir_proc("Writer\n",p_id);            
     get_shm();                   
     
     sem_init(&pflag,1,1);
     sem_wait(&pflag);
-    //printf("1\n");
+    printf("1\n");
     while(i<n_procesos){    
         Writer *w = malloc(sizeof(Writer));        
         w->id = i;        
@@ -58,7 +58,7 @@ int main(int argc, char** argv) {
             
             //clock_gettime(CLOCK_REALTIME, time_audit);
             //printf("Timestamp: %lu : %lu\n", time_audit->tv_sec, time_audit->tv_nsec);
-            //printf("5\n");
+            printf("5\n");
             
             sem_wait(&mem->sem_shm_writer);
             sem_wait(&mem->sem_fin_writer);
@@ -68,18 +68,18 @@ int main(int argc, char** argv) {
             sem_post(&pflag);
             //clock_gettime(CLOCK_REALTIME, time_audit);
             //printf("Timestamp: %lu : %lu\n", time_audit->tv_sec, time_audit->tv_nsec);
-            //printf("6\n");
+            printf("6\n");
             
             sleep(1);
             
             //clock_gettime(CLOCK_REALTIME, time_audit);
             //printf("Timestamp: %lu : %lu\n", time_audit->tv_sec, time_audit->tv_nsec);
-            //printf("7 (proc)\n");
+            printf("7 (proc)\n");
             
             sem_wait(&pflag);            
             //clock_gettime(CLOCK_REALTIME, time_audit);
             //printf("Timestamp: %lu : %lu\n", time_audit->tv_sec, time_audit->tv_nsec);
-            //printf("8 (proc)\n");
+            printf("8 (proc)\n");
             
             //if(not_flags_on()){
             //clock_gettime(CLOCK_REALTIME, time_audit);
@@ -112,25 +112,25 @@ void *writer_function(void *vargp)
     escribir_thread(tid);
     int lim= mem->num_lineas-1;    
     int i = 0;
-    //printf("2\n");
+    printf("2\n");
     while(1){        
         band[writer->id]=0;        
         pthread_mutex_lock(&mutex);
         
         //clock_gettime(CLOCK_REALTIME, time_audit);
         //printf("Timestamp: %lu : %lu\n", time_audit->tv_sec, time_audit->tv_nsec);
-        //printf("3\n");
+        printf("3\n");
         
         band[writer->id]=1;
         
         //clock_gettime(CLOCK_REALTIME, time_audit);
         //printf("Timestamp: %lu : %lu\n", time_audit->tv_sec, time_audit->tv_nsec);
-        //printf("4\n");
+        printf("4\n");
         sem_wait(&pflag);   
         
         //clock_gettime(CLOCK_REALTIME, time_audit);
         //printf("Timestamp: %lu : %lu\n", time_audit->tv_sec, time_audit->tv_nsec);
-        //printf("7(thread)\n");
+        printf("7(thread)\n");
         if(strcmp(&mem->lineas[i].Mensaje,LINEA_VACIA)==0){            
             char *time = timestamp(writer->id);
             mem->lineas[i].ID = writer->id;
@@ -151,14 +151,14 @@ void *writer_function(void *vargp)
         sem_post(&pflag);
         //clock_gettime(CLOCK_REALTIME, time_audit);
         //printf("Timestamp: %lu : %lu\n", time_audit->tv_sec, time_audit->tv_nsec);
-        //printf("8(thread)\n");
+        printf("8(thread)\n");
         
         sleep(1);      
         
         pthread_mutex_unlock(&mutex);        
         //clock_gettime(CLOCK_REALTIME, time_audit);
         //printf("Timestamp: %lu : %lu\n", time_audit->tv_sec, time_audit->tv_nsec);
-        //printf("9\n");
+        printf("9\n");
         
         sleep(writer->tiempo_sleep);
     }  
@@ -194,21 +194,19 @@ void escribir_bitacora(char *msj){
 
 
 void escribir_proc(char *msj,int proceso){
-    sem_wait(&mem->sem_proceso);
-    FILE *procs;    
+    FILE *procs;  
     procs = fopen (PROCS, "a+");  
-    fprintf(procs,"%s:%d\n",msj,proceso);
+    fprintf(procs,"%s%d\n",msj,proceso);    
     fclose(procs);
-    sem_post(&mem->sem_proceso);
 }
 
 void escribir_thread(int proceso){
-    sem_wait(&mem->sem_proceso);
+    //sem_wait(&mem->sem_proceso);
     FILE *procs;    
     procs = fopen (PROCS, "a+");  
     fprintf(procs,"%d\n",proceso);
     fclose(procs);
-    sem_post(&mem->sem_proceso);
+    //sem_post(&mem->sem_proceso);
 }
 
 
