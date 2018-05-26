@@ -105,15 +105,15 @@ void espiar(string tipo) {
     printf("--------------------------------------------\n");
     printf("\tHilos con acceso al archivo:\n");
     printf("--------------------------------------------\n");
-    printf("%s", get_pids_estado(pids, "R"));
+    printf("%s", get_pids_estado(pids, 'R'));
     printf("--------------------------------------------\n");
     printf("\tHilos dormidos:\n");
     printf("--------------------------------------------\n");
-    printf("%s", get_pids_estado(pids, "D"));
+    printf("%s", get_pids_estado(pids, 'D'));
     printf("--------------------------------------------\n");
     printf("\tHilos bloqueados:\n");
     printf("--------------------------------------------\n");
-    printf("%s", get_pids_estado(pids, "S"));
+    printf("%s", get_pids_estado(pids, 'S'));
 }
 
 int is_num(char *buff) {
@@ -130,8 +130,9 @@ void limpiar_pids(string *pids) {
     }
 }
 
-string get_pids_estado(string *pids, string estado) {
-    char *res[25];
+string get_pids_estado(string *pids, char estado) {
+    char *res[1000];
+    strcpy(res, "");
     char *ruta2[MAX_LINEA_BIT];
     FILE *file;
     char buff[MAX_LINEA_BIT];
@@ -147,8 +148,24 @@ string get_pids_estado(string *pids, string estado) {
         fgets(buff, MAX_LINEA_BIT, file); // Salta primera línea
         fgets(buff, MAX_LINEA_BIT, file);
         
-        
+        if (str_in_str(estado, buff)) {
+            strcat(res, pids[i]);
+            strcat(res, "\n");
+        }
         
         fclose(file);
     }
+    
+    if (strcmp(res, "") == 0)
+        strcpy(res, "\n");
+    
+    return res;
+}
+
+int str_in_str(char estado, string buff) {
+    for (int i = 0; i < MAX_LINEA_BIT; i++)
+        if (buff[i] == estado)
+            return 1;
+    
+    return 0;
 }

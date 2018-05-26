@@ -19,7 +19,8 @@ int espionaje_solic(string tipo);
 void espiar(string tipo);
 int is_num(char *buff);
 void limpiar_pids(string *);
-string get_pids_estado(string *pids, string estado);
+string get_pids_estado(string *pids, char estado);
+int str_in_str(char estado, string buff);
 
 #endif /* ESPIA_H */
 
