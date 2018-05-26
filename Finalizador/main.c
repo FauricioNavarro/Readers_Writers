@@ -40,7 +40,12 @@ int main(int argc, char** argv) {
         
         
     err1 = shmctl ( shm_id , IPC_RMID , NULL) ;               
-
+    
+    if(remove(PROCS)==0) // Eliminamos el archivo
+        printf("El archivo fue eliminado satisfactoriamente\n");
+    else
+        printf("No se pudo eliminar el archivo\n");
+    
     //shmdt(shm_id);
     system("killall -g reader");
     system("killall -g reader_egoista");
