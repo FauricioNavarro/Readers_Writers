@@ -22,8 +22,6 @@
 #define BITACORA "/home/stickman/Documents/TEC/SO/Proyecto_2/Readers_Writers/bitacora.txt"
 #define KEY_FILE "/home/stickman/Documents/TEC/SO/Proyecto_2/Readers_Writers/key_file.txt"
 
-#define KEY 123
-
 typedef char * string;
 
 typedef struct{

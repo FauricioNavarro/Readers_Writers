@@ -69,3 +69,5 @@ pid:3369
 Reader
 pid:3491
 >>>>>>> Fauricio
+Writer
+pid:9437
