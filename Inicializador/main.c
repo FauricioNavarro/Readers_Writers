@@ -21,7 +21,6 @@
 #include "inicializador.h"
 
 Mem_comp *memoria_comp;
-char *setshm = "0000000000000000000000000";
 
 int main(int argc, char** argv) {           
     get_shm();
@@ -33,10 +32,11 @@ int main(int argc, char** argv) {
 }
 
 void get_shm(){
-    key_t key = ftok("shmfile",21);
-    printf("%d\n", key);
+    key_t key = ftok(KEY_FILE,21);
+    printf("key %x\n", key);
     printf("%s\n", strerror(errno));
     int shmid = shmget(key,sizeof(Mem_comp),0666|IPC_CREAT);
+    printf("shmid %d\n", shmid);
     memoria_comp = (Mem_comp*) shmat(shmid,(void*)0,0);
     memoria_comp->num_lineas = 20;
     memoria_comp->lineas[memoria_comp->num_lineas]; 
@@ -53,6 +53,8 @@ void init_sem(){
     sem_init(&memoria_comp->sem_fin_writer,1,1);
     sem_init(&memoria_comp->sem_fin_r_e,1,1); 
     sem_init(&memoria_comp->sem_fin_espia,1,1);       
+    
+    sem_init(&memoria_comp->sem_bitacora,1,1);
 }
 
 
@@ -67,7 +69,7 @@ void init_flags(){
 void clean_shm(){
     int i=0;
     while(i<memoria_comp->num_lineas){
-        strcpy(&memoria_comp->lineas[i].Mensaje,setshm);       
+        strcpy(&memoria_comp->lineas[i].Mensaje,LINEA_VACIA);       
         printf("msj:%s\n",memoria_comp->lineas[i].Mensaje);
         i=i+1;
     } 

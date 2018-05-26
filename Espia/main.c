@@ -28,7 +28,7 @@
  * 
  */
 int main(int argc, char** argv) {
-    key_t key = ftok("shmfile", 21);
+    key_t key = ftok(KEY_FILE, 21);
     int shmid = shmget(key, 1, 0666 | IPC_CREAT);
     Mem_comp *mem = shmat(shmid, NULL, 0);
 

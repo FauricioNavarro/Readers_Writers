@@ -20,22 +20,23 @@
 #define CONTROLADOR_H
 
 typedef enum {
-    writer,
-    reader,
-    r_e,
-    espia
+    writer, // 0
+    reader, // 1
+    r_e,    // 2
+    espia   // 3
 } tipo_proc;
 
-struct tmp_data {
+typedef struct {
     tipo_proc tipo;
     Mem_comp *mem;
-};
+} thread_info;
 
 void pedir_sem_procs(Mem_comp *mem);
 tipo_proc selec_segun_jerar(Mem_comp *mem, char *contador_r_e);
 tipo_proc selec_segun_3_r_e(Mem_comp *mem, char *contador_r_e);
 void spawn_fin_chck_thread(Mem_comp *mem, tipo_proc tipo_selec);
 void *relock_sem_shm(void *tmp);
+void print_want_flags(Mem_comp *mem);
 
 #endif /* CONTROLADOR_H */
 

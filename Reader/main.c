@@ -14,7 +14,6 @@
 #include "reader.h"
 pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
 char *linea = "\n---------------------------------------------------\n";
-char *setshm = "0000000000000000000000000";
 Mem_comp *mem;
 int band[];
 int n_procesos;
@@ -24,9 +23,16 @@ int n_procesos;
  */
 int main(int argc, char** argv) {
     //Parametros temporales
+    /*
+    n_procesos = atoi(argv[1]);
+    int t_read = atoi(argv[2]);  
+    int t_sleep = atoi(argv[3]);    
+    printf("param 1:%d,2:%d,3:%d\n",n_procesos,t_read,t_read);
+    */
     n_procesos = 2;
     int t_sleep = 4;
     int t_read = 2;    
+    
     int i = 0;       
     int p_id = getpid(); 
     pthread_t readr_array[n_procesos];    
@@ -50,8 +56,13 @@ int main(int argc, char** argv) {
             mem->reader_wants_shm = 1;
             sem_wait(&mem->sem_shm_reader);        
             sem_wait(&mem->sem_fin_reader);             
-            sem_post(&mem->sem_shm_reader);        
-            sem_post(&mem->sem_fin_reader);                         
+            mem->reader_wants_shm = 0;           
+            
+            if(not_flags_on()==0){
+                sem_post(&mem->sem_shm_reader);        
+                sem_post(&mem->sem_fin_reader);  
+            }
+            sleep(1);
         }else{
             mem->reader_wants_shm = 0;
         }        
@@ -70,27 +81,22 @@ void *reader_function(void *vargp){
     int i = 0;
     while(1){        
         band[reader->id]=0;
-        //pthread_mutex_lock(&mutex);
-        //sem_wait(&sem_controlador);
         band[reader->id]=1;
-        if(strcmp(&mem->lineas[i].Mensaje,setshm)==0){
-            printf("Casilla vacia \n");
-        }else{
-            char *time = timestamp(reader->id);
-            escribir_bitacora(timestamp);
-            printf("Linea leida: %s",mem->lineas->Mensaje[i]);
+        if(strcmp(&mem->lineas[i].Mensaje,LINEA_VACIA)!=0){
+            char *time = timestamp(reader->id);            
+            mem->lineas->ID = reader->id;
+            mem->lineas->linea = i;            
+            escribir_bitacora(time);
             sleep(reader->tiempo_read);
-        }
-        band[reader->id]=-1;
-        sleep(reader->tiempo_sleep);        
+            band[reader->id]=-1;
+        }        
+        
         if(i==lim){            
             i=0;            
         }else{                
             i=i+1;
-        } 
-        //sem_wait(&sem_controlador);
-        //pthread_mutex_unlock(&mutex);
-        sleep(0.1);        
+        }         
+        sleep(reader->tiempo_sleep); 
     }
     return NULL;
 }
@@ -108,7 +114,7 @@ char* timestamp(int id){
 
 
 void get_shm(){
-    key_t key = ftok("shmfile",21);
+    key_t key = ftok(KEY_FILE, 21);
     printf("key %d", key);
     int shmid = shmget(key,sizeof(Mem_comp),0666|IPC_CREAT);
     mem = (Mem_comp*) shmat(shmid, NULL, 0);
@@ -116,10 +122,12 @@ void get_shm(){
 
 
 void escribir_bitacora(char *msj){
+    sem_wait(&mem->sem_bitacora);
     FILE *bitacora;
     bitacora = fopen (BITACORA, "a+");  
     fprintf(bitacora,"Reader-> %s\n",msj);
     fclose(bitacora);
+    sem_post(&mem->sem_bitacora);
 }
 
 
@@ -136,7 +144,8 @@ int flags_on(){
     while(i<n_procesos){
         if(band[i]==1){
             return 1;
-        }            
+        }    
+        i++;
     }
     return 0;
 }
@@ -146,7 +155,8 @@ int not_flags_on(){
     while(i<n_procesos){
         if(band[i]==1){
             return 0;
-        }            
+        }   
+        i++;
     }
     return 1;
 }
