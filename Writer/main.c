@@ -30,7 +30,7 @@ struct timespec *time_audit = &time_audit_value;
  * WRITER
  */
 int main(int argc, char** argv) {
-    n_procesos = 3;
+    n_procesos = 1;
     int t_sleep = 4;
     int t_write = 2;    
     int i = 0;       
