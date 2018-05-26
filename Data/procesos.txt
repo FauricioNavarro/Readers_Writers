@@ -102,6 +102,7 @@ Writer
 pid:32399
 Writer
 pid:32674
+<<<<<<< HEAD
 =======
 pid:10252
 Writer
@@ -117,3 +118,11 @@ pid:7592
 Writer
 pid:9357
 >>>>>>> Stashed changes
+=======
+Writer
+pid:2447
+Writer
+pid:4141
+Writer
+pid:7060
+>>>>>>> Fauricio
