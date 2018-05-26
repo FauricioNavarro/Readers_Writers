@@ -122,10 +122,12 @@ void get_shm(){
 
 
 void escribir_bitacora(char *msj){
+    sem_wait(&mem->sem_bitacora);
     FILE *bitacora;
     bitacora = fopen (BITACORA, "a+");  
     fprintf(bitacora,"Reader-> %s\n",msj);
     fclose(bitacora);
+    sem_post(&mem->sem_bitacora);
 }
 
 

@@ -53,6 +53,8 @@ void init_sem(){
     sem_init(&memoria_comp->sem_fin_writer,1,1);
     sem_init(&memoria_comp->sem_fin_r_e,1,1); 
     sem_init(&memoria_comp->sem_fin_espia,1,1);       
+    
+    sem_init(&memoria_comp->sem_bitacora,1,1);
 }
 
 

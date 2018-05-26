@@ -36,6 +36,9 @@ typedef struct{
 }Linea;
 
 typedef struct{
+    // Semáforo para controlar acceso a la bitácora
+    sem_t sem_bitacora;
+    
     // Semáforos para controlar acceso a memoria compartida
     sem_t sem_shm_writer;
     sem_t sem_shm_reader;

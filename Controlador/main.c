@@ -24,9 +24,13 @@
 #include <time.h>
 #include <unistd.h>
 #include <errno.h>
+#include <pthread.h>
 
 #include "definiciones.h"
 #include "controlador.h"
+
+struct timespec time_audit_value;
+struct timespec *time_audit = &time_audit_value;
 
 /*
  *  Implementa las reglas especiales de coordinación entre procesos.
@@ -76,10 +80,12 @@ int main(int argc, char** argv) {
         
         if (tipo_selec != -1) {
             printf("\n[Proc of type %d entered]\n\n", tipo_selec);
+            //clock_gettime(CLOCK_REALTIME, time_audit);
+            //printf("Timestamp: %lu : %lu\n", time_audit->tv_sec, time_audit->tv_nsec);
             spawn_fin_chck_thread(mem, tipo_selec);
         }
         
-        sleep(1);
+        sleep(2);
         //printf("} End cycle probe\n");
     }
 
@@ -110,6 +116,9 @@ void print_want_flags(Mem_comp *mem) {
     } else {
         printf("Flags apagadas\n");
     }
+    
+    //clock_gettime(CLOCK_REALTIME, time_audit);
+    //printf("Timestamp: %lu : %lu\n", time_audit->tv_sec, time_audit->tv_nsec);
 }
 
 /*
@@ -238,29 +247,41 @@ void spawn_fin_chck_thread(Mem_comp *mem, tipo_proc tipo_selec) {
  */
 void *relock_sem_shm(void *tmp) {
     thread_info *data = (thread_info *) tmp;
-    printf("Probe 0\n");
     switch (data->tipo) {
         case writer:
-            printf("Probe 1\n");
+            //clock_gettime(CLOCK_REALTIME, time_audit);
+            //printf("Timestamp: %lu : %lu\n", time_audit->tv_sec, time_audit->tv_nsec);
+            //printf("Esperando finalización\n");
             sem_wait(&(data->mem->sem_fin_writer));
-            printf("Probe 2\n");
+            
+            //clock_gettime(CLOCK_REALTIME, time_audit);
+            //printf("Timestamp: %lu : %lu\n", time_audit->tv_sec, time_audit->tv_nsec);
+            //printf("Bloqueando proceso...\n");
             sem_wait(&(data->mem->sem_shm_writer));
-            printf("Probe 3\n");
+            
+            //clock_gettime(CLOCK_REALTIME, time_audit);
+            //printf("Timestamp: %lu : %lu\n", time_audit->tv_sec, time_audit->tv_nsec);
+            //printf("Proceso bloqueado\n");
+            
+            sem_post(&(data->mem->sem_fin_writer));
             break;
 
         case reader:
             sem_wait(&(data->mem->sem_fin_reader));
             sem_wait(&(data->mem->sem_shm_reader));
+            sem_post(&(data->mem->sem_fin_reader));
             break;
 
         case r_e:
             sem_wait(&(data->mem->sem_fin_r_e));
             sem_wait(&(data->mem->sem_shm_r_e));
+            sem_post(&(data->mem->sem_fin_r_e));
             break;
 
         case espia:
             sem_wait(&(data->mem->sem_fin_espia));
             sem_wait(&(data->mem->sem_shm_espia));
+            sem_post(&(data->mem->sem_fin_espia));
             break;
     }
 }

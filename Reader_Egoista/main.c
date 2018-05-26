@@ -48,26 +48,9 @@ int main(int argc, char** argv) {
         Reader_eg *re = malloc(sizeof(Reader_eg));         
         re->id = i;        
         re->tiempo_sleep = t_sleep;
-        re->tiempo_read = t_read;  
-        mem->r_e_wants_shm = 1;
+        re->tiempo_read = t_read;
         pthread_create(&readr_array[i], NULL, reader_function, (void*) re);
         i=i+1;
-    }
-    
-    while(1){
-        if(flags_on()){
-            mem->r_e_wants_shm = 1;
-            sem_wait(&mem->sem_shm_r_e);        
-            sem_wait(&mem->sem_fin_r_e);
-            sem_post(&pflag);
-            sem_wait(&pflag);
-            if(not_flags_on()){
-                sem_post(&mem->sem_shm_r_e);        
-                sem_post(&mem->sem_fin_r_e); 
-            }            
-        }else{
-            mem->r_e_wants_shm = 0;
-        }        
     }
     
     while(1){
@@ -89,7 +72,7 @@ int main(int argc, char** argv) {
             mem->r_e_wants_shm = 0;
         }        
     }
-    pthread_join(writer_array[0], NULL); 
+    pthread_join(readr_array[0], NULL); 
     
     return (EXIT_SUCCESS);
 }
@@ -148,10 +131,12 @@ void get_shm(){
 
 
 void escribir_bitacora(char *msj){
+    sem_wait(&mem->sem_bitacora);
     FILE *bitacora;
     bitacora = fopen (BITACORA, "a+");  
     fprintf(bitacora,"Reader egoista -> %s\n",msj);
     fclose(bitacora);
+    sem_post(&mem->sem_bitacora);
 }
 
 

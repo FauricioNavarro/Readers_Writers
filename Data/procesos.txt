@@ -40,3 +40,35 @@ Writer
 pid:13160
 Writer
 pid:14128
+Writer
+pid:14882
+Writer
+pid:15143
+Writer
+pid:15595
+Writer
+pid:16261
+Writer
+pid:17950
+Writer
+pid:18735
+Writer
+pid:19115
+Writer
+pid:19289
+Writer
+pid:19632
+Writer
+pid:20009
+Reader egoista
+pid:20439
+Writer
+pid:21200
+Reader egoista
+pid:21329
+Writer
+pid:22632
+Writer
+pid:22968
+Reader egoista
+pid:23041

@@ -23,6 +23,9 @@ sem_t pflag;
 int band[]; //Bandera para ver el estado de cada thread
 int n_procesos;
 
+struct timespec time_audit_value;
+struct timespec *time_audit = &time_audit_value;
+
 /*
  * WRITER
  */
@@ -40,7 +43,7 @@ int main(int argc, char** argv) {
     
     sem_init(&pflag,1,1);
     sem_wait(&pflag);
-    printf("1\n");
+    //printf("1\n");
     while(i<n_procesos){    
         Writer *w = malloc(sizeof(Writer));        
         w->id = i;        
@@ -53,20 +56,41 @@ int main(int argc, char** argv) {
     while(1){
         if(flags_on()){
             mem->writer_wants_shm = 1;
-            printf("5\n");
-            sem_wait(&mem->sem_shm_writer);        
-            sem_wait(&mem->sem_fin_writer);             
+            
+            //clock_gettime(CLOCK_REALTIME, time_audit);
+            //printf("Timestamp: %lu : %lu\n", time_audit->tv_sec, time_audit->tv_nsec);
+            //printf("5\n");
+            
+            sem_wait(&mem->sem_shm_writer);
+            sem_wait(&mem->sem_fin_writer);
+            //printf("Probe\n");
             mem->writer_wants_shm = 0;
             
             sem_post(&pflag);
-            printf("6\n");
+            //clock_gettime(CLOCK_REALTIME, time_audit);
+            //printf("Timestamp: %lu : %lu\n", time_audit->tv_sec, time_audit->tv_nsec);
+            //printf("6\n");
+            
             sleep(1);
-            printf("7 (proc)\n");
+            
+            //clock_gettime(CLOCK_REALTIME, time_audit);
+            //printf("Timestamp: %lu : %lu\n", time_audit->tv_sec, time_audit->tv_nsec);
+            //printf("7 (proc)\n");
+            
             sem_wait(&pflag);            
-            printf("8 (proc)\n");
+            //clock_gettime(CLOCK_REALTIME, time_audit);
+            //printf("Timestamp: %lu : %lu\n", time_audit->tv_sec, time_audit->tv_nsec);
+            //printf("8 (proc)\n");
+            
             //if(not_flags_on()){
+            //clock_gettime(CLOCK_REALTIME, time_audit);
+            //printf("Timestamp: %lu : %lu\n", time_audit->tv_sec, time_audit->tv_nsec);
+            //printf("A punto de soltar sems (5.3)\n");
             sem_post(&mem->sem_shm_writer);        
-            sem_post(&mem->sem_fin_writer);             
+            sem_post(&mem->sem_fin_writer);
+            //clock_gettime(CLOCK_REALTIME, time_audit);
+            //printf("Timestamp: %lu : %lu\n", time_audit->tv_sec, time_audit->tv_nsec);
+            //printf("Sems sueltos\n");
             //}            
             sleep(1);
         }else{
@@ -88,15 +112,25 @@ void *writer_function(void *vargp)
     pid_t tid = (pid_t) syscall (SYS_gettid);
     int lim= mem->num_lineas-1;    
     int i = 0;
-    printf("2\n");
+    //printf("2\n");
     while(1){        
         band[writer->id]=0;        
         pthread_mutex_lock(&mutex);
-        printf("3\n");
+        
+        //clock_gettime(CLOCK_REALTIME, time_audit);
+        //printf("Timestamp: %lu : %lu\n", time_audit->tv_sec, time_audit->tv_nsec);
+        //printf("3\n");
+        
         band[writer->id]=1;
-        printf("4\n");
+        
+        //clock_gettime(CLOCK_REALTIME, time_audit);
+        //printf("Timestamp: %lu : %lu\n", time_audit->tv_sec, time_audit->tv_nsec);
+        //printf("4\n");
         sem_wait(&pflag);   
-        printf("7(thread)\n");
+        
+        //clock_gettime(CLOCK_REALTIME, time_audit);
+        //printf("Timestamp: %lu : %lu\n", time_audit->tv_sec, time_audit->tv_nsec);
+        //printf("7(thread)\n");
         if(strcmp(&mem->lineas[i].Mensaje,LINEA_VACIA)==0){            
             char *time = timestamp(writer->id);
             mem->lineas->ID = writer->id;
@@ -115,10 +149,17 @@ void *writer_function(void *vargp)
             i=i+1;
         }         
         sem_post(&pflag);
-        printf("8(thread)\n");
+        //clock_gettime(CLOCK_REALTIME, time_audit);
+        //printf("Timestamp: %lu : %lu\n", time_audit->tv_sec, time_audit->tv_nsec);
+        //printf("8(thread)\n");
+        
         sleep(1);      
+        
         pthread_mutex_unlock(&mutex);        
-        printf("9\n");
+        //clock_gettime(CLOCK_REALTIME, time_audit);
+        //printf("Timestamp: %lu : %lu\n", time_audit->tv_sec, time_audit->tv_nsec);
+        //printf("9\n");
+        
         sleep(writer->tiempo_sleep);
     }  
     return NULL;
@@ -143,10 +184,12 @@ void get_shm(){
 
 
 void escribir_bitacora(char *msj){    
+    sem_wait(&mem->sem_bitacora);
     FILE *bitacora;    
     bitacora = fopen (BITACORA, "a+");
     fprintf(bitacora,"Writer->%s\n",msj);    
     fclose(bitacora);    
+    sem_post(&mem->sem_bitacora);
 }
 
 
