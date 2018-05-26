@@ -72,6 +72,7 @@ pid:3491
 Writer
 pid:9437
 Writer
+<<<<<<< Updated upstream
 pid:6874
 Writer
 pid:8928
@@ -101,9 +102,32 @@ Writer
 pid:32399
 Writer
 pid:32674
+<<<<<<< HEAD
+=======
+pid:10252
+Writer
+pid:3406
+Writer
+pid:5796
+Writer
+pid:6123
+Writer
+pid:6857
+Writer
+pid:7592
+Writer
+pid:9357
+>>>>>>> Stashed changes
+<<<<<<< Updated upstream
+=======
 Writer
 pid:2447
 Writer
 pid:4141
 Writer
 pid:7060
+>>>>>>> Fauricio
+=======
+Writer
+pid:4818
+>>>>>>> Stashed changes

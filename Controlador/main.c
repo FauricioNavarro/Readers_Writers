@@ -66,7 +66,6 @@ int main(int argc, char** argv) {
     char contador_r_e = 0;
     tipo_proc tipo_selec;
     while (1) {
-        printf("Entered busy waiting\n");
         print_want_flags(mem);
         
         if (mem->r_e_wants_shm && contador_r_e == 2)
@@ -75,7 +74,7 @@ int main(int argc, char** argv) {
             tipo_selec = selec_segun_jerar(mem, &contador_r_e);
         
         if (tipo_selec != -1) {
-            printf("[Proc of type %d entered]\n", tipo_selec);
+            printf("\n[Proc of type %d entered]\n", tipo_selec);
             spawn_fin_chck_thread(mem, tipo_selec);
         }
     }

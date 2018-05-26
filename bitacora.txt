@@ -1,1 +1,5 @@
+<<<<<<< Updated upstream
 Writer->w0-2018/04/25-21:03:06
+=======
+Writer->w0-2018/04/25-21:02:14
+>>>>>>> Stashed changes
