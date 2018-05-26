@@ -24,6 +24,8 @@
 
 #define MAX_LINEA_BIT 45
 
+char ruta[MAX_LINEA_BIT] = "/proc/";
+
 /*
  * 
  */
@@ -41,6 +43,8 @@ int main(int argc, char** argv) {
     }
     else
         perror("Uso: espia [mem | Writer | Reader | \"Reader egoista\"]");
+    
+    shmdt((void *) mem);
 
     return (EXIT_SUCCESS);
 }
@@ -68,8 +72,9 @@ int espionaje_solic(string tipo) {
 
 void espiar(string tipo) {
     FILE *file = fopen(PROCS, "r");
-    //printf("Error: %s", strerror(errno));
     char buff[MAX_LINEA_BIT];
+    string pids[100]; // TO DO: Hacer dinámico
+    limpiar_pids(pids);
 
     strcat(tipo, "\n"); // Para que el strcmp no falle
     // Encuentra la sección en el archivo correspondiente a la info. del proceso
@@ -79,22 +84,36 @@ void espiar(string tipo) {
     } while (strcmp(buff, tipo) != 0);
     
     // Construcción de la ruta base para consultar archivo status de los hilos
-    char ruta[MAX_LINEA_BIT] = "/proc/";
     fgets(buff, MAX_LINEA_BIT, file);
     strcat(ruta, buff); // "/proc/#"
     strcat(ruta, "/task/"); // "/proc/#/task/
     
-    
-    /* Consulta por PID's del status de los hilos del proceso
-    do {
-        fgets(buff, MAX_LINEA_BIT, file);
-        //printf("%s\n", buff);
-        if (is_num(buff)) {
-            strcat(ruta, buff); // "/proc/#/task/#
-            
+    // Almacena PID's de los hilos
+    for (int i = 0; i < 100; i++) {// TO DO: Ajustar con respecto a def pids
+        fgets(pids[i], MAX_LINEA_BIT, file);
+        if (!is_num(pids[i])) {
+            strcpy(pids[i], "");
+            break;
         }
-    } while ();
-     */
+    }
+    
+    fclose(file);
+    
+    printf("============================================\n");
+    printf("Estado de los %s\n", tipo);
+    printf("============================================\n");
+    printf("--------------------------------------------\n");
+    printf("\tHilos con acceso al archivo:\n");
+    printf("--------------------------------------------\n");
+    printf("%s", get_pids_estado(pids, "R"));
+    printf("--------------------------------------------\n");
+    printf("\tHilos dormidos:\n");
+    printf("--------------------------------------------\n");
+    printf("%s", get_pids_estado(pids, "D"));
+    printf("--------------------------------------------\n");
+    printf("\tHilos bloqueados:\n");
+    printf("--------------------------------------------\n");
+    printf("%s", get_pids_estado(pids, "S"));
 }
 
 int is_num(char *buff) {
@@ -103,4 +122,33 @@ int is_num(char *buff) {
             return 0;
     
     return 1;
+}
+
+void limpiar_pids(string *pids) {
+    for (int i = 0; i < 100; i++) { // TO DO: Ajustar con def pids
+        strcpy(pids[i], "");
+    }
+}
+
+string get_pids_estado(string *pids, string estado) {
+    char *res[25];
+    char *ruta2[MAX_LINEA_BIT];
+    FILE *file;
+    char buff[MAX_LINEA_BIT];
+    
+    for (int i = 0; i < 100; i++) { // TO DO: Ajustar con def pids
+        // Construcción de la ruta
+        strcpy(ruta2, ruta); // "/proc/#/task/"
+        strcat(ruta2, pids[i]); // "/proc/#/task/#"
+        strcat(ruta2, "/status"); // "/proc/#/task/#/status"
+        file = fopen(ruta2, "r");
+        
+        // Obtención de la línea de interés en status
+        fgets(buff, MAX_LINEA_BIT, file); // Salta primera línea
+        fgets(buff, MAX_LINEA_BIT, file);
+        
+        
+        
+        fclose(file);
+    }
 }
