@@ -38,6 +38,9 @@ int main(int argc, char** argv) {
     escribir_proc("Writer\npid",p_id);        
     get_shm();                   
     
+    sem_init(&pflag,1,1);
+    sem_wait(&pflag);
+    
     while(i<n_procesos){    
         Writer *w = malloc(sizeof(Writer));        
         w->id = i;        
@@ -52,12 +55,14 @@ int main(int argc, char** argv) {
             mem->writer_wants_shm = 1;
             sem_wait(&mem->sem_shm_writer);        
             sem_wait(&mem->sem_fin_writer); 
+            
             sem_post(&pflag);
             sem_wait(&pflag);
-            if(not_flags_on()){
-                sem_post(&mem->sem_shm_writer);        
-                sem_post(&mem->sem_fin_writer); 
-            }            
+            //if(not_flags_on()){
+            sem_post(&mem->sem_shm_writer);        
+            sem_post(&mem->sem_fin_writer);             
+            //}            
+            sleep(0.1);
         }else{
             mem->writer_wants_shm = 0;
         }        
@@ -68,6 +73,7 @@ int main(int argc, char** argv) {
              
     return (EXIT_SUCCESS);
 }
+
 
 void *writer_function(void *vargp)
 {     
@@ -100,9 +106,9 @@ void *writer_function(void *vargp)
         }else{                
             i=i+1;
         } 
-        sem_wait(&pflag);
-        pthread_mutex_unlock(&mutex);
-        sleep(0.1);            
+        sem_post(&pflag);
+        sleep(0.1);      
+        pthread_mutex_unlock(&mutex);              
     }  
     return NULL;
 }
