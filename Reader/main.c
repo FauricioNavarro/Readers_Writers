@@ -14,7 +14,7 @@
 #include "reader.h"
 pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
 char *linea = "\n---------------------------------------------------\n";
-char *setshm = "0000000000000000000000000";
+char *LINEA_VACIA = "0000000000000000000000000";
 Mem_comp *mem;
 int band[];
 int n_procesos;
@@ -73,7 +73,7 @@ void *reader_function(void *vargp){
         //pthread_mutex_lock(&mutex);
         //sem_wait(&sem_controlador);
         band[reader->id]=1;
-        if(strcmp(&mem->lineas[i].Mensaje,setshm)==0){
+        if(strcmp(&mem->lineas[i].Mensaje,LINEA_VACIA)==0){
             printf("Casilla vacia \n");
         }else{
             char *time = timestamp(reader->id);
