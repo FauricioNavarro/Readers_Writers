@@ -23,6 +23,7 @@
 #include <pthread.h>
 #include <time.h>
 #include <string.h>
+#include <unistd.h>
 #include "definiciones.h"
 
 typedef struct{
@@ -34,6 +35,7 @@ typedef struct{
 void *reader_function(void *vargp);
 void escribir_bitacora(char *msj);
 void escribir_proc(char *msj,int proceso);
+void escribir_thread(int proceso);
 void get_shm();
 char* timestamp(int id);
 int flags_on();

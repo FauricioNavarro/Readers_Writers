@@ -72,3 +72,9 @@ Writer
 pid:22968
 Reader egoista
 pid:23041
+Writer
+:5407
+5408
+Writer
+:5636
+5637

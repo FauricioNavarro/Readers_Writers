@@ -55,6 +55,7 @@ void init_sem(){
     sem_init(&memoria_comp->sem_fin_espia,1,1);       
     
     sem_init(&memoria_comp->sem_bitacora,1,1);
+    sem_init(&memoria_comp->sem_proceso,1,1);
 }
 
 
