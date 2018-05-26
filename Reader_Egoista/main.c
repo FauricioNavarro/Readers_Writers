@@ -51,7 +51,7 @@ int main(int argc, char** argv) {
         re->tiempo_read = t_read;
         pthread_create(&readr_array[i], NULL, reader_function, (void*) re);
         i=i+1;
-    }
+    }      
     
     while(1){
         if(flags_on()){
