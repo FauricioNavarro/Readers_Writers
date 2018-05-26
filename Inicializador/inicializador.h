@@ -15,7 +15,7 @@
 #include <time.h>
 #include "definiciones.h"
 
-void get_shm();
+void get_shm(int lineas);
 void init_sem();
 void init_flags();
 void clean_shm();

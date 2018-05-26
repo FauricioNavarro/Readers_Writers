@@ -22,8 +22,10 @@
 
 Mem_comp *memoria_comp;
 
-int main(int argc, char** argv) {           
-    get_shm();
+int main(int argc, char** argv) {  
+    //int num_lineas = atoi(argv[1]);
+    int num_lineas= 30;
+    get_shm(num_lineas);
     init_sem();
     init_flags();
     clean_shm();
@@ -31,14 +33,14 @@ int main(int argc, char** argv) {
     return (EXIT_SUCCESS);
 }
 
-void get_shm(){
+void get_shm(int lineas){
     key_t key = ftok(KEY_FILE,21);
     printf("key %x\n", key);
     printf("%s\n", strerror(errno));
     int shmid = shmget(key,sizeof(Mem_comp),0666|IPC_CREAT);
     printf("shmid %d\n", shmid);
     memoria_comp = (Mem_comp*) shmat(shmid,(void*)0,0);
-    memoria_comp->num_lineas = 20;
+    memoria_comp->num_lineas = lineas; 
     memoria_comp->lineas[memoria_comp->num_lineas]; 
 }
 
