@@ -132,6 +132,7 @@ Writer
 pid:4818
 >>>>>>> Stashed changes
 Writer
+<<<<<<< Updated upstream
 pid:9625
 Writer
 pid:9826
@@ -139,3 +140,8 @@ Writer
 pid:10371
 Writer
 pid:11159
+=======
+pid:7453
+Writer
+pid:7613
+>>>>>>> Stashed changes

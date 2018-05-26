@@ -56,6 +56,7 @@ int main(int argc, char** argv) {
             sem_wait(&mem->sem_shm_writer);        
             sem_wait(&mem->sem_fin_writer);             
             mem->writer_wants_shm = 0;
+            
             sem_post(&pflag);
             printf("6\n");
             //sleep(0.1);
