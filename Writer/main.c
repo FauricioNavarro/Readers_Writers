@@ -26,7 +26,7 @@ int n_procesos;
  * WRITER
  */
 int main(int argc, char** argv) {
-    n_procesos = 2;
+    n_procesos = 1;
     int t_sleep = 4;
     int t_write = 2;    
     int i = 0;       
@@ -39,7 +39,7 @@ int main(int argc, char** argv) {
     
     sem_init(&pflag,1,1);
     sem_wait(&pflag);
-    
+    printf("1\n");
     while(i<n_procesos){    
         Writer *w = malloc(sizeof(Writer));        
         w->id = i;        
@@ -52,12 +52,16 @@ int main(int argc, char** argv) {
     while(1){
         if(flags_on()){
             mem->writer_wants_shm = 1;
+            printf("5\n");
             sem_wait(&mem->sem_shm_writer);        
-            sem_wait(&mem->sem_fin_writer); 
+            sem_wait(&mem->sem_fin_writer);             
             mem->writer_wants_shm = 0;
             sem_post(&pflag);
-            sleep(0.1);
-            sem_wait(&pflag);
+            printf("6\n");
+            //sleep(0.1);
+            printf("7(proc)\n");
+            sem_wait(&pflag);            
+            printf("8(proc)\n");
             //if(not_flags_on()){
             sem_post(&mem->sem_shm_writer);        
             sem_post(&mem->sem_fin_writer);             
@@ -82,12 +86,15 @@ void *writer_function(void *vargp)
     pid_t tid = (pid_t) syscall (SYS_gettid);
     int lim= mem->num_lineas-1;    
     int i = 0;
+    printf("2\n");
     while(1){        
-        band[writer->id]=0;
+        band[writer->id]=0;        
         pthread_mutex_lock(&mutex);
-        printf("Entre despues del mutex\n");
+        printf("3\n");
         band[writer->id]=1;
-        sem_wait(&pflag);        
+        printf("4\n");
+        sem_wait(&pflag);   
+        printf("7(thread)\n");
         if(strcmp(&mem->lineas[i].Mensaje,LINEA_VACIA)==0){            
             char *time = timestamp(writer->id);
             mem->lineas->ID = writer->id;
@@ -97,18 +104,19 @@ void *writer_function(void *vargp)
             //char *msj = mem->lineas[i].Mensaje;
             //printf("Linea escrita: %s",msj);
             sleep(writer->tiempo_write);
-            band[writer->id]=-1;              
-            printf("Fin de ciclo\n");
+            band[writer->id]=-1;                          
         }
               
         if(i==lim){            
             i=0;            
         }else{                
             i=i+1;
-        } 
+        }         
         sem_post(&pflag);
+        printf("8(thread)\n");
         sleep(0.1);      
-        pthread_mutex_unlock(&mutex);              
+        pthread_mutex_unlock(&mutex);        
+        printf("9\n");
         sleep(writer->tiempo_sleep);
     }  
     return NULL;
