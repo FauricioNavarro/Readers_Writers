@@ -16,17 +16,19 @@
 
 #include <semaphore.h>
 
-//#define PROCS "/home/fauricio/NetBeansProjects/Readers – Writers/Data/procesos.txt"
-#define PROCS "/home/stickman/Documents/TEC/SO/Proyecto_2/Readers_Writers/Data/procesos.txt"
-//#define BITACORA "/home/fauricio/NetBeansProjects/Readers – Writers/bitacora.txt"
-#define BITACORA "/home/stickman/Documents/TEC/SO/Proyecto_2/Readers_Writers/bitacora.txt"
-#define KEY_FILE "/home/stickman/Documents/TEC/SO/Proyecto_2/Readers_Writers/key_file.txt"
+#define PROCS "/home/fauricio/NetBeansProjects/Readers – Writers/Data/procesos.txt"
+//#define PROCS "/home/stickman/Documents/TEC/SO/Proyecto_2/Readers_Writers/Data/procesos.txt"
+#define BITACORA "/home/fauricio/NetBeansProjects/Readers – Writers/bitacora.txt"
+//#define BITACORA "/home/stickman/Documents/TEC/SO/Proyecto_2/Readers_Writers/bitacora.txt"
+//#define KEY_FILE "/home/stickman/Documents/TEC/SO/Proyecto_2/Readers_Writers/key_file.txt"
+#define KEY_FILE "/home/fauricio/NetBeansProjects/Readers – Writers/key_file.txt"
+#define LINEA_VACIA "000000000000000000000000000000000000000000000"
 
 typedef char * string;
 
 typedef struct{
     int ID;
-    char Mensaje[25];
+    char Mensaje[45];
     int linea;
 }Linea;
 

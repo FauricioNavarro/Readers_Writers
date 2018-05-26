@@ -17,7 +17,6 @@
 
 pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
 char *linea = "\n---------------------------------------------------\n";
-char *setshm = "0000000000000000000000000";
 Mem_comp *mem;
 sem_t pflag;
 int band[]; //Bandera para ver el estado de cada thread
@@ -57,6 +56,7 @@ int main(int argc, char** argv) {
             sem_wait(&mem->sem_fin_writer); 
             
             sem_post(&pflag);
+            sleep(0.1);
             sem_wait(&pflag);
             //if(not_flags_on()){
             sem_post(&mem->sem_shm_writer);        
@@ -80,27 +80,27 @@ void *writer_function(void *vargp)
     Writer *writer = (Writer*) vargp;
     pthread_t thId = pthread_self();    
     pid_t tid = (pid_t) syscall (SYS_gettid);
-    int lim= mem->num_lineas;    
+    int lim= mem->num_lineas-1;    
     int i = 0;
     while(1){        
         band[writer->id]=0;
         pthread_mutex_lock(&mutex);
+        printf("Entre despues del mutex\n");
         band[writer->id]=1;
-        sem_wait(&pflag);
-        
-        if(strcmp(&mem->lineas[i].Mensaje,setshm)==0){
-            printf("Casilla vacia \n");
-        }else{
+        sem_wait(&pflag);        
+        if(strcmp(&mem->lineas[i].Mensaje,LINEA_VACIA)==0){            
             char *time = timestamp(writer->id);
             mem->lineas->ID = writer->id;
-            mem->lineas->linea = i;
-            strcpy(mem->lineas->Mensaje[i],time);
-            escribir_bitacora(timestamp);
-            printf("Linea escrita: %s",mem->lineas->Mensaje[i]);
-            sleep(writer);
+            mem->lineas->linea = i;            
+            strcpy(mem->lineas[i].Mensaje,time);            
+            escribir_bitacora(time);
+            printf("Escribi en bit\n");
+            printf("Linea escrita: %s",mem->lineas[i].Mensaje);
+            sleep(writer->tiempo_write);
+            band[writer->id]=-1;
+            sleep(writer->tiempo_sleep);  
         }
-        band[writer->id]=-1;
-        sleep(writer->tiempo_sleep);        
+              
         if(i==lim){            
             i=0;            
         }else{                
@@ -114,11 +114,11 @@ void *writer_function(void *vargp)
 }
 
 char* timestamp(int id){
-    char *timestamp = (char *)malloc(sizeof(char) * 16);      
+    char *timestamp = (char *)malloc(sizeof(char) * 45);      
     time_t ltime = time(NULL);    
     struct tm *tm;      
     tm=localtime(&ltime); 
-    sprintf(timestamp,"%s%d-%04d/%02d/%02d-%02d:%02d:%02d","r",id, tm->tm_year+1900, tm->tm_mon, 
+    sprintf(timestamp,"%s%d-%04d/%02d/%02d-%02d:%02d:%02d","w",id, tm->tm_year+1900, tm->tm_mon, 
             tm->tm_mday, tm->tm_hour, tm->tm_min, tm->tm_sec);
     return timestamp;     
 }
@@ -131,11 +131,11 @@ void get_shm(){
 }
 
 
-void escribir_bitacora(char *msj){
-    FILE *bitacora;
-    bitacora = fopen (BITACORA, "a+");  
-    fprintf(bitacora,"Reader-> %s\n",msj);
-    fclose(bitacora);
+void escribir_bitacora(char *msj){    
+    FILE *bitacora;    
+    bitacora = fopen (BITACORA, "a+");          
+    fprintf(bitacora,"Writer->%s\n",msj);    
+    fclose(bitacora);    
 }
 
 

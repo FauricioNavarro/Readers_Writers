@@ -21,7 +21,6 @@
 #include "inicializador.h"
 
 Mem_comp *memoria_comp;
-char *setshm = "0000000000000000000000000";
 
 int main(int argc, char** argv) {           
     get_shm();
@@ -68,7 +67,7 @@ void init_flags(){
 void clean_shm(){
     int i=0;
     while(i<memoria_comp->num_lineas){
-        strcpy(&memoria_comp->lineas[i].Mensaje,setshm);       
+        strcpy(&memoria_comp->lineas[i].Mensaje,LINEA_VACIA);       
         printf("msj:%s\n",memoria_comp->lineas[i].Mensaje);
         i=i+1;
     } 
