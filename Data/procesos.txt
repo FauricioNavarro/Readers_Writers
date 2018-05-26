@@ -1,147 +1,42 @@
-Reader egoista
-pid:8595
-Reader
-pid:8894
 Writer
-pid:9115
-Reader egoista
-pid:9616
-Reader egoista
-pid:9741
-Reader
-pid:14231
-Reader
-pid:14643
-Reader egoista
-pid:14898
-Reader
-pid:15105
-Reader
-pid:15403
-Reader egoista
-pid:15438
+pid:6968
 Writer
-pid:15560
-Reader
-pid:15762
-Reader egoista
-pid:15810
+pid:7380
 Writer
-pid:15854
-Reader egoista
-pid:15998
-Reader
-pid:16032
+pid:7698
 Writer
-pid:16067
-Reader
-pid:17496
-Reader
-pid:17851
+pid:8077
 Writer
-pid:8543
-Reader
-pid:8844
-<<<<<<< HEAD
+pid:8367
 Writer
-pid:5740
-Reader
-pid:5823
-Reader egoista
-pid:5886
+pid:8678
 Writer
-pid:6502
+pid:8867
 Writer
-pid:3453
+pid:9137
 Writer
-pid:4722
-Reader
-pid:4758
-Reader egoista
-pid:4796
+pid:9374
 Writer
-pid:8452
-=======
-Reader egoista
-pid:3335
-Reader
-pid:3369
-Reader
-pid:3491
->>>>>>> Fauricio
+pid:9592
 Writer
-pid:9437
+pid:9842
 Writer
-<<<<<<< Updated upstream
-pid:6874
+pid:10374
 Writer
-pid:8928
+pid:10587
 Writer
-pid:12037
+pid:10981
 Writer
-pid:13668
+pid:11307
 Writer
-pid:15685
+pid:11615
 Writer
-pid:16332
+pid:11943
 Writer
-pid:16570
+pid:12126
 Writer
-pid:17890
+pid:12413
 Writer
-pid:19719
+pid:13160
 Writer
-pid:21053
-Writer
-pid:21319
-Writer
-pid:27345
-Writer
-pid:30768
-Writer
-pid:32399
-Writer
-pid:32674
-<<<<<<< HEAD
-=======
-pid:10252
-Writer
-pid:3406
-Writer
-pid:5796
-Writer
-pid:6123
-Writer
-pid:6857
-Writer
-pid:7592
-Writer
-pid:9357
->>>>>>> Stashed changes
-<<<<<<< Updated upstream
-=======
-Writer
-pid:2447
-Writer
-pid:4141
-Writer
-pid:7060
->>>>>>> Fauricio
-=======
-Writer
-pid:4818
->>>>>>> Stashed changes
-Writer
-<<<<<<< Updated upstream
-pid:9625
-Writer
-pid:9826
-Writer
-pid:10371
-Writer
-pid:11159
-=======
-pid:7453
-Writer
-pid:7613
->>>>>>> Stashed changes
+pid:14128

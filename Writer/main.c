@@ -11,7 +11,8 @@
  * Created on 10 de mayo de 2018, 05:23 PM
  */
 
-#include <iso646.h>
+//#include <iso646.h>
+#include <unistd.h>
 
 #include "writer.h"
 
@@ -26,14 +27,14 @@ int n_procesos;
  * WRITER
  */
 int main(int argc, char** argv) {
-    n_procesos = 1;
+    n_procesos = 3;
     int t_sleep = 4;
     int t_write = 2;    
     int i = 0;       
     int p_id = getpid(); 
     pthread_t writer_array[n_procesos];    
     
-    //band[n_procesos];
+    band[n_procesos];
     escribir_proc("Writer\npid",p_id);        
     get_shm();                   
     
@@ -59,15 +60,15 @@ int main(int argc, char** argv) {
             
             sem_post(&pflag);
             printf("6\n");
-            //sleep(0.1);
-            printf("7(proc)\n");
+            sleep(1);
+            printf("7 (proc)\n");
             sem_wait(&pflag);            
-            printf("8(proc)\n");
+            printf("8 (proc)\n");
             //if(not_flags_on()){
             sem_post(&mem->sem_shm_writer);        
             sem_post(&mem->sem_fin_writer);             
             //}            
-            sleep(0.1);
+            sleep(1);
         }else{
             mem->writer_wants_shm = 0;
         }        
@@ -115,7 +116,7 @@ void *writer_function(void *vargp)
         }         
         sem_post(&pflag);
         printf("8(thread)\n");
-        sleep(0.1);      
+        sleep(1);      
         pthread_mutex_unlock(&mutex);        
         printf("9\n");
         sleep(writer->tiempo_sleep);
