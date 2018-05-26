@@ -80,8 +80,8 @@ int main(int argc, char** argv) {
         
         if (tipo_selec != -1) {
             printf("\n[Proc of type %d entered]\n\n", tipo_selec);
-            clock_gettime(CLOCK_REALTIME, time_audit);
-            printf("Timestamp: %lu : %lu\n", time_audit->tv_sec, time_audit->tv_nsec);
+            //clock_gettime(CLOCK_REALTIME, time_audit);
+            //printf("Timestamp: %lu : %lu\n", time_audit->tv_sec, time_audit->tv_nsec);
             spawn_fin_chck_thread(mem, tipo_selec);
         }
         
@@ -117,8 +117,8 @@ void print_want_flags(Mem_comp *mem) {
         printf("Flags apagadas\n");
     }
     
-    clock_gettime(CLOCK_REALTIME, time_audit);
-    printf("Timestamp: %lu : %lu\n", time_audit->tv_sec, time_audit->tv_nsec);
+    //clock_gettime(CLOCK_REALTIME, time_audit);
+    //printf("Timestamp: %lu : %lu\n", time_audit->tv_sec, time_audit->tv_nsec);
 }
 
 /*
@@ -249,19 +249,19 @@ void *relock_sem_shm(void *tmp) {
     thread_info *data = (thread_info *) tmp;
     switch (data->tipo) {
         case writer:
-            clock_gettime(CLOCK_REALTIME, time_audit);
-            printf("Timestamp: %lu : %lu\n", time_audit->tv_sec, time_audit->tv_nsec);
-            printf("Esperando finalización\n");
+            //clock_gettime(CLOCK_REALTIME, time_audit);
+            //printf("Timestamp: %lu : %lu\n", time_audit->tv_sec, time_audit->tv_nsec);
+            //printf("Esperando finalización\n");
             sem_wait(&(data->mem->sem_fin_writer));
             
-            clock_gettime(CLOCK_REALTIME, time_audit);
-            printf("Timestamp: %lu : %lu\n", time_audit->tv_sec, time_audit->tv_nsec);
-            printf("Bloqueando proceso...\n");
+            //clock_gettime(CLOCK_REALTIME, time_audit);
+            //printf("Timestamp: %lu : %lu\n", time_audit->tv_sec, time_audit->tv_nsec);
+            //printf("Bloqueando proceso...\n");
             sem_wait(&(data->mem->sem_shm_writer));
             
-            clock_gettime(CLOCK_REALTIME, time_audit);
-            printf("Timestamp: %lu : %lu\n", time_audit->tv_sec, time_audit->tv_nsec);
-            printf("Proceso bloqueado\n");
+            //clock_gettime(CLOCK_REALTIME, time_audit);
+            //printf("Timestamp: %lu : %lu\n", time_audit->tv_sec, time_audit->tv_nsec);
+            //printf("Proceso bloqueado\n");
             
             sem_post(&(data->mem->sem_fin_writer));
             break;
